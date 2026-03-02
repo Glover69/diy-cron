@@ -1,0 +1,34 @@
+<section class="entire-login bg-muted w-full h-dvh flex flex-col items-center gap-8 justify-center p-8">
+
+  <div class="center-container w-full md:w-sm max-h-fit gap-6 flex flex-col items-center">
+    <div class="header flex flex-col items-center">
+        <div class="w-12 h-12 rounded-lg bg-gray-400 mb-5"></div>
+        <span class="font-semibold text-gray-800 text-2xl tracking-tight">Welcome to DIY Cron</span>
+        <span class="font-regular text-gray-500 tracking-tight">Login with your Google account</span>
+    </div>
+    
+
+    <div class="relative w-full">
+     <app-button
+     (clicked)="loginWithGoogle()"
+       text="Continue with Google" 
+       hierarchy="secondary" 
+       iconName="google-logo"
+       iconStyle="duotone"
+       size="md" 
+       class="w-full">
+     </app-button>
+    </div>
+
+     <span class="text-sm text-gray-500 text-center">
+      By clicking continue, you agree to<br> our
+      <a routerLink="/terms-of-service" class="hover:text-gray-700 underline transition-colors">Terms of Service</a>
+      and    
+      <a routerLink="/privacy-policy" class="hover:text-gray-700 underline transition-colors">Privacy Policy</a>.
+    </span>
+
+  </div>
+
+
+
+</section>

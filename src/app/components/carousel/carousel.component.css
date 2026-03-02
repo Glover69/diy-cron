@@ -1,0 +1,9 @@
+.carousel-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* No transition — RAF handles movement directly */
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}

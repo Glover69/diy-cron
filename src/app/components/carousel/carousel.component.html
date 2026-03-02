@@ -1,0 +1,61 @@
+<div class="carousel-wrapper relative w-full overflow-hidden"
+     (mouseenter)="stopScroll()"
+     (mouseleave)="startScroll()">
+
+  <!-- Fade left edge -->
+  <div class="pointer-events-none absolute left-0 top-0 h-full w-28 z-10
+              bg-linear-to-r from-[#FEFEFC] to-transparent">
+  </div>
+
+  <!-- Fade right edge -->
+  <div class="pointer-events-none absolute right-0 top-0 h-full w-28 z-10
+              bg-linear-to-l from-[#FEFEFC] to-transparent">
+  </div>
+
+  <!-- Track -->
+  <div #track class="carousel-track flex gap-4 pb-2 will-change-transform">
+
+    @for (item of displayItems; track $index) {
+      <div class="carousel-card shrink-0 rounded-2xl border border-border-card bg-white shadow-card p-5
+                  overflow-hidden relative flex flex-col justify-between gap-4"
+           [style.width.px]="cardWidth">
+
+        <div class="flex flex-col gap-1">
+          <span class="text-sm text-gray-400 font-medium">Next Run</span>
+          <span class="text-4xl font-bold tracking-tight">{{item.nextRun}}</span>
+          <span class="text-sm text-gray-400">From now</span>
+        </div>
+
+        <i class="ph-duotone ph-package absolute -top-10 -right-6 text-8xl opacity-20"></i>
+
+        <div class="footer flex items-center grow-0 justify-between">
+          <div class="flex flex-col items-start w-fit">
+            <span class="font-console font-bold text-sm">{{item.name}}</span>
+            <span class="font-console text-xs text-gray-400 truncate max-w-[90%]">{{item.url}}</span>
+            <span class="font-console text-xs text-gray-400">{{item.scheduleLabel}}</span>
+          </div>
+          <!-- <div [class]="item.status === 'active'
+                ? 'badge flex items-center gap-1 bg-green-100 text-green-700 font-bold rounded-2xl px-2.5 py-1 text-xs'
+                : 'badge flex items-center gap-1 bg-orange-100 text-orange-700 font-bold rounded-2xl px-2.5 py-1 text-xs'">
+            <i [class]="item.status === 'active' ? 'ph-duotone ph-pulse' : 'ph-duotone ph-warning'"></i>
+            <span>{{ item.status === 'active' ? 'Active' : 'Warning' }}</span>
+          </div> -->
+        </div>
+
+      </div>
+    }
+
+  </div>
+
+  <!-- Dot indicators -->
+  <div class="dots flex items-center justify-center gap-2 mt-4">
+    @for (item of items; track $index) {
+      <button
+        class="rounded-full transition-all duration-300"
+        [class]="$index === activeIndex ? 'w-4 h-2 bg-brand-600' : 'w-2 h-2 bg-gray-300'"
+        (click)="startScroll()">
+      </button>
+    }
+  </div>
+
+</div>
