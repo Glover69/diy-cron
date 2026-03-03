@@ -1,0 +1,152 @@
+<section class="">
+    <div class="header w-full flex items-start justify-between mb-6">
+        <div class="left flex flex-col items-start">
+          <span class="font-semibold font-sans flex flex-wrap text-3xl tracking-tight">CronJobs</span>
+          <span class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60">Your created jobs.</span>
+        </div>
+
+        <app-button class="w-fit" size="sm" type="button" text="Create new job" hierarchy="primary" icon="leading" iconName="plus"></app-button>
+
+    </div>
+    
+    @if (isLoading) {
+      <!-- Skeleton state -->
+      <div class="w-full h-full animate-pulse">
+        <div class="mx-auto w-full">
+          <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
+          <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
+
+          <div class="h-40 w-full rounded-lg bg-gray-200 my-8"></div>
+
+          <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
+          <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+          </div>
+        </div>
+      </div>
+    }
+    <!-- @else if (schedules.length === 0) {
+    <div class="content-for-empty-dashboard w-full flex-1 flex flex-col items-center justify-center fade-in">
+      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
+      <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No Schedules Available</span>
+      <span class="text-gray-600 text-sm lg:text-base xl:text-2xl opacity-60 font-regular tracking-tight">Your completed schedules will appear here when done!</span>
+       <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
+    </div>
+  } -->
+    @else {
+      <app-tab-group class="mt-12">
+
+        <!-- All Jobs -->
+        <app-tab label="Overview" icon="squares-four">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (job of cronJobs; track job.id) {
+              <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
+            }
+          </div>
+        </app-tab>
+
+        <!-- Active -->
+        <app-tab label="Active" icon="activity" [badge]="activeJobs.length">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (job of activeJobs; track job.id) {
+              <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
+            }
+          </div>
+        </app-tab>
+
+        <!-- Needs Attention -->
+        <app-tab label="Issues" icon="warning" [badge]="warningJobs.length">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (job of warningJobs; track job.id) {
+              <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
+            } @empty {
+              <div class="col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center">
+                <i class="ph-duotone ph-check-circle text-5xl text-green-400"></i>
+                <span class="font-bold text-gray-600">No issues</span>
+                <span class="text-sm text-gray-400">All your jobs are running fine</span>
+              </div>
+            }
+          </div>
+        </app-tab>
+
+        <!-- Inactive -->
+        <app-tab label="Inactive" icon="pause-circle" [badge]="inactiveJobs.length">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (job of inactiveJobs; track job.id) {
+              <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
+            } @empty {
+              <div class="col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center">
+                <i class="ph-duotone ph-play-circle text-5xl text-gray-300"></i>
+                <span class="font-bold text-gray-600">No inactive jobs</span>
+                <span class="text-sm text-gray-400">All your jobs are currently enabled</span>
+              </div>
+            }
+          </div>
+        </app-tab>
+
+      </app-tab-group>
+    }
+
+</section>
+
+<!-- Job card template -->
+<ng-template #jobCard let-job>
+  <div class="job-card rounded-lg border border-border-card bg-white shadow-card overflow-hidden relative flex flex-col">
+
+    <i class="ph-duotone ph-package absolute -bottom-10 -right-6 text-[8rem] opacity-20"></i>
+
+    <!-- Card top bar -->
+    <div class="h-1.5 w-full"
+         [class]="job.status === 'active' ? 'bg-green-600' : job.status === 'warning' ? 'bg-orange-600' : 'bg-gray-400'">
+    </div>
+
+    <div class="p-4 flex flex-col gap-3 flex-1">
+
+      <!-- Name + status badge -->
+      <div class="flex items-start justify-between">
+        <div class="left-side flex flex-col items-start gap-1">
+            <span class="font-bold text-lg leading-tight">{{ job.name }}</span>
+
+            <div class="flex items-center gap-1.5 text-xs text-gray-400">
+              <i class="ph ph-link shrink-0"></i>
+              <span class="font-console truncate">{{ job.url }}</span>
+            </div>
+        
+            <div class="flex items-center gap-1.5 text-xs text-gray-500">
+              <i class="ph ph-timer shrink-0"></i>
+              <span class="font-console font-medium">{{ job.schedule }}</span>
+              <span class="text-gray-300">·</span>
+              <span class="truncate">{{ job.scheduleLabel }}</span>
+            </div>
+
+        </div>
+
+        <span class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+              [class]="job.status === 'active'
+                ? 'bg-green-100 text-green-700'
+                : job.status === 'warning'
+                ? 'bg-orange-100 text-orange-700'
+                : 'bg-gray-100 text-gray-500'">
+          <i [class]="job.status === 'active' ? 'ph ph-activity' : job.status === 'warning' ? 'ph ph-warning' : 'ph ph-pause'"></i>
+          {{ job.status === 'active' ? 'Active' : job.status === 'warning' ? 'Warning' : 'Inactive' }}
+        </span>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-auto w-3/5 pt-2 border-t border-gray-100 flex items-center justify-between">
+        <div class="flex flex-col">
+          <span class="text-xs text-gray-400">Next run</span>
+          <span class="text-2xl tracking-tighter font-bold">{{ job.nextRun }}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>

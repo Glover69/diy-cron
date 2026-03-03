@@ -1,0 +1,45 @@
+<div class="tab-group flex flex-col w-full">
+
+  <!-- Tab Header -->
+  <div class="tab-header flex items-center gap-1 border-b border-gray-200 overflow-x-auto">
+    @for (tab of tabs; track tab.label) {
+      <button
+        type="button"
+        (click)="setActive(tab)"
+        class="tab-btn relative flex items-center gap-2 px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-200 outline-none cursor-pointer"
+        [class]="tab.isActive
+          ? 'text-brand-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand-600 after:rounded-t-full'
+          : 'text-gray-500 hover:text-gray-700'">
+
+        <!-- Icon -->
+        @if (tab.icon) {
+          <i [class]="'ph ph-' + tab.icon + ' text-base'"></i>
+        }
+
+        <!-- Label -->
+        <span class="font-semibold">{{ tab.label }}</span>
+
+        <!-- Badge -->
+        @if (tab.badge !== null && tab.badge !== undefined) {
+          <span class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-xs font-semibold transition-all duration-200"
+                [class]="tab.isActive ? 'bg-brand-100 text-brand-700' : 'bg-gray-100 text-gray-600'">
+            {{ tab.badge }}
+          </span>
+        }
+
+      </button>
+    }
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content w-full pt-4">
+    @for (tab of tabs; track tab.label) {
+      @if (tab.isActive) {
+        <div class="fade-in">
+          <ng-container [ngTemplateOutlet]="tab.content"></ng-container>
+        </div>
+      }
+    }
+  </div>
+
+</div>

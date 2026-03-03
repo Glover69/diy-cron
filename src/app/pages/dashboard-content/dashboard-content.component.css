@@ -1,0 +1,14 @@
+@keyframes fadeInSoft {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in {
+  animation: fadeInSoft 320ms ease-out both;
+}
+
+.text-gradient-fade {
+    background: linear-gradient(0deg, rgba(255, 255, 255, 0.00) 0%, var(--color-brand-600) 60.38%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }

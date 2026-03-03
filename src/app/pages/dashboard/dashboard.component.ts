@@ -6,7 +6,7 @@ import { GoogleAuthService } from '../../../services/google-auth.service';
 import { ButtonComponent } from '../../components/new/button/button.component';
 import { InputFieldBaseComponent } from '../../components/new/input-field-base/input-field-base.component';
 import { finalize, generate } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet, RouterLinkWithHref } from '@angular/router';
 import { DrawerComponent } from '../../components/new/drawer/drawer.component';
 import {
   FormBuilder,
@@ -27,87 +27,22 @@ import { CarouselComponent } from "../../components/carousel/carousel.component"
     DrawerComponent,
     InputFieldBaseComponent,
     DialogComponent,
-    CarouselComponent
+    CarouselComponent,
+    RouterOutlet,
+    RouterLinkWithHref
 ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   schedules: Schedule[] = [];
-  emojiOptions = [
-    { icon: '😞', label: 'Poor' },
-    { icon: '😐', label: 'Fair' },
-    { icon: '👍', label: 'Good' },
-    { icon: '👌', label: 'Great' },
-    { icon: '🔥', label: 'Excellent' },
-  ];
+
 
   navItems = [
     { label: 'Dashboard', link: '/home/dashboard', icon: 'speedometer'},
     { label: 'CronJobs', link: '/home/cronjobs', icon: 'timer'},
     { label: 'Execution Logs', link: '/home/logs', icon: 'read-cv-logo'},
   ]
-
-  statCards = [
-    { label: 'Total Jobs', value: '4', img: 'box', icon: 'package'},
-    { label: 'Active Jobs', value: '4', img: 'infinity', icon: 'infinity'},
-    { label: "Today's Executions", value: '4', img: 'alarm', icon: 'timer'},
-  ]
-
-  // ...existing code...
-
-cronJobs = [
-  {
-    id: 1,
-    name: 'Email Daily Report',
-    url: 'https://api.myapp.com/email',
-    schedule: '0 9 * * *',
-    scheduleLabel: 'Every day at 9:00 am',
-    nextRun: '15h, 45m',
-    status: 'active',
-    img: 'package'
-  },
-  {
-    id: 2,
-    name: 'Database Backup',
-    url: 'https://api.myapp.com/backup',
-    schedule: '0 0 * * *',
-    scheduleLabel: 'Every day at midnight',
-    nextRun: '8h, 12m',
-    status: 'active',
-    img: 'package'
-  },
-  {
-    id: 3,
-    name: 'Clear Cache',
-    url: 'https://api.myapp.com/cache/clear',
-    schedule: '*/30 * * * *',
-    scheduleLabel: 'Every 30 minutes',
-    nextRun: '0h, 12m',
-    status: 'active',
-    img: 'package'
-  },
-  {
-    id: 4,
-    name: 'Sync Inventory',
-    url: 'https://api.myapp.com/inventory/sync',
-    schedule: '0 */6 * * *',
-    scheduleLabel: 'Every 6 hours',
-    nextRun: '3h, 05m',
-    status: 'warning',
-    img: 'package'
-  },
-  {
-    id: 5,
-    name: 'Send Notifications',
-    url: 'https://api.myapp.com/notify',
-    schedule: '0 8 * * 1',
-    scheduleLabel: 'Every Monday at 8:00 am',
-    nextRun: '2d, 14h',
-    status: 'active',
-    img: 'package'
-  }
-];
 
   feedbackForm: FormGroup;
   selectedRating!: string;

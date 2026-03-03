@@ -45,3 +45,14 @@ export type LoginResponse = {
   token: string;
   user: GoogleUser
 };
+
+export interface CronJob {
+  id: number;
+  name: string;
+  url: string;
+  schedule: string;
+  scheduleLabel: string;
+  nextRun: string;
+  status: 'active' | 'warning' | 'inactive';
+  img: string;
+}
