@@ -15,11 +15,11 @@ export class CronjobsComponent {
   isLoading = false;
 
   cronJobs: CronJob[] = [
-    { id: 1, name: 'Email Daily Report', url: 'https://api.myapp.com/email', schedule: '0 9 * * *', scheduleLabel: 'Every day at 9:00 am', nextRun: '15h, 45m', status: 'active', img: 'package' },
-    { id: 2, name: 'Database Backup', url: 'https://api.myapp.com/backup', schedule: '0 0 * * *', scheduleLabel: 'Every day at midnight', nextRun: '8h, 12m', status: 'active', img: 'package' },
-    { id: 3, name: 'Clear Cache', url: 'https://api.myapp.com/cache/clear', schedule: '*/30 * * * *', scheduleLabel: 'Every 30 minutes', nextRun: '0h, 12m', status: 'active', img: 'package' },
-    { id: 4, name: 'Sync Inventory', url: 'https://api.myapp.com/inventory/sync', schedule: '0 */6 * * *', scheduleLabel: 'Every 6 hours', nextRun: '3h, 05m', status: 'warning', img: 'package' },
-    { id: 5, name: 'Send Notifications', url: 'https://api.myapp.com/notify', schedule: '0 8 * * 1', scheduleLabel: 'Every Monday at 8:00 am', nextRun: '2d, 14h', status: 'inactive', img: 'package' },
+    { cronId: "1", httpMethod: 'GET', scheduleType: 'cron', isActive: true, cronName: 'Email Daily Report', endpointUrl: 'https://api.myapp.com/email', scheduleExpression: '0 9 * * *', scheduleLabel: 'Every day at 9:00 am', nextRunAt: '15h, 45m', status: 'active' },
+    { cronId: "2", httpMethod: 'GET', scheduleType: 'cron', isActive: true, cronName: 'Database Backup', endpointUrl: 'https://api.myapp.com/backup', scheduleExpression: '0 0 * * *', scheduleLabel: 'Every day at midnight', nextRunAt: '8h, 12m', status: 'active' },
+    { cronId: "3", httpMethod: 'GET', scheduleType: 'cron', isActive: true, cronName: 'Clear Cache', endpointUrl: 'https://api.myapp.com/cache/clear', scheduleExpression: '*/30 * * * *', scheduleLabel: 'Every 30 minutes', nextRunAt: '0h, 12m', status: 'active' },
+    { cronId: "4", httpMethod: 'GET', scheduleType: 'cron', isActive: false, cronName: 'Sync Inventory', endpointUrl: 'https://api.myapp.com/inventory/sync', scheduleExpression: '0 */6 * * *', scheduleLabel: 'Every 6 hours', nextRunAt: '3h, 05m', status: 'warning' },
+    { cronId: "5", httpMethod: 'GET', scheduleType: 'cron', isActive: false, cronName: 'Send Notifications', endpointUrl: 'https://api.myapp.com/notify', scheduleExpression: '0 8 * * 1', scheduleLabel: 'Every Monday at 8:00 am', nextRunAt: '2d, 14h', status: 'inactive' }
   ];
 
   get activeJobs(): CronJob[] {

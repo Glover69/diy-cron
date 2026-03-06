@@ -46,7 +46,7 @@
         <!-- All Jobs -->
         <app-tab label="Overview" icon="squares-four">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (job of cronJobs; track job.id) {
+            @for (job of cronJobs; track job.cronId) {
               <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
             }
           </div>
@@ -55,7 +55,7 @@
         <!-- Active -->
         <app-tab label="Active" icon="activity" [badge]="activeJobs.length">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (job of activeJobs; track job.id) {
+            @for (job of activeJobs; track job.cronId) {
               <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
             }
           </div>
@@ -64,7 +64,7 @@
         <!-- Needs Attention -->
         <app-tab label="Issues" icon="warning" [badge]="warningJobs.length">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (job of warningJobs; track job.id) {
+            @for (job of warningJobs; track job.cronId) {
               <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
             } @empty {
               <div class="col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center">
@@ -79,7 +79,7 @@
         <!-- Inactive -->
         <app-tab label="Inactive" icon="pause-circle" [badge]="inactiveJobs.length">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            @for (job of inactiveJobs; track job.id) {
+            @for (job of inactiveJobs; track job.cronId) {
               <ng-container *ngTemplateOutlet="jobCard; context: { $implicit: job }"></ng-container>
             } @empty {
               <div class="col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center">
@@ -100,7 +100,7 @@
 <ng-template #jobCard let-job>
   <div class="job-card rounded-lg border border-border-card bg-white shadow-card overflow-hidden relative flex flex-col">
 
-    <i class="ph-duotone ph-package absolute -bottom-10 -right-6 text-[8rem] opacity-20"></i>
+    <i  class="ph-duotone ph-package absolute -bottom-10 -right-6 text-[8rem] opacity-20"></i>
 
     <!-- Card top bar -->
     <div class="h-1.5 w-full"
@@ -112,16 +112,16 @@
       <!-- Name + status badge -->
       <div class="flex items-start justify-between">
         <div class="left-side flex flex-col items-start gap-1">
-            <span class="font-bold text-lg leading-tight">{{ job.name }}</span>
+            <span class="font-bold text-lg leading-tight">{{ job.cronName }}</span>
 
             <div class="flex items-center gap-1.5 text-xs text-gray-400">
               <i class="ph ph-link shrink-0"></i>
-              <span class="font-console truncate">{{ job.url }}</span>
+              <span class="font-console truncate">{{ job.endpointUrl }}</span>
             </div>
         
             <div class="flex items-center gap-1.5 text-xs text-gray-500">
               <i class="ph ph-timer shrink-0"></i>
-              <span class="font-console font-medium">{{ job.schedule }}</span>
+              <span class="font-console font-medium">{{ job.scheduleExpression }}</span>
               <span class="text-gray-300">·</span>
               <span class="truncate">{{ job.scheduleLabel }}</span>
             </div>
@@ -143,7 +143,7 @@
       <div class="mt-auto w-3/5 pt-2 border-t border-gray-100 flex items-center justify-between">
         <div class="flex flex-col">
           <span class="text-xs text-gray-400">Next run</span>
-          <span class="text-2xl tracking-tighter font-bold">{{ job.nextRun }}</span>
+          <span class="text-2xl tracking-tighter font-bold">{{ job.nextRunAt }}</span>
         </div>
       </div>
 

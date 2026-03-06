@@ -52,23 +52,23 @@
       </div>
 
 
-      <div class="nav-items-group flex flex-col items-start mt-5 gap-12">
-        <div class="platform-group w-full flex flex-col gap-5">
+      <div class="nav-items-group flex flex-col w-full items-start mt-5 gap-12">
+        <div class="platform-group w-full flex flex-col gap-3">
           <span class="text-sm">Platform</span>
 
           <div class="nav-items flex flex-col items-start gap-2 w-full">
             @for (item of navItems; track $index) {
-              <div [routerLink]="item.link" class="item w-full flex items-center gap-2">
-                <span [ngClass]="`ph ph-${item.icon}`"></span>
+              <div [routerLinkActiveOptions]="{ exact: item.exact ?? false }" [routerLink]="item.link" routerLinkActive="bg-brand-50 text-brand-700 font-semibold" class="item w-full flex items-center gap-2 px-2 py-1 cursor-pointer rounded-md">
+                <span routerLinkActive="ph-bold" [ngClass]="`ph ph-${item.icon}`"></span>
                 <span>{{item.label}}</span>
               </div>
             }
-
           </div>
+          
         </div>
 
 
-         <div class="extras-group w-full flex flex-col gap-5">
+         <div class="extras-group w-full flex flex-col gap-3">
           <span class="text-sm">Extras</span>
 
           <div class="nav-items flex flex-col items-start gap-2 w-full">

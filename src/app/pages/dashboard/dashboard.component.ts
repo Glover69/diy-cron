@@ -4,10 +4,7 @@ import { GoogleUser, Schedule } from '../../../models/data.models';
 import { environment } from '../../../environments/environment';
 import { GoogleAuthService } from '../../../services/google-auth.service';
 import { ButtonComponent } from '../../components/new/button/button.component';
-import { InputFieldBaseComponent } from '../../components/new/input-field-base/input-field-base.component';
-import { finalize, generate } from 'rxjs';
-import { Router, RouterOutlet, RouterLinkWithHref } from '@angular/router';
-import { DrawerComponent } from '../../components/new/drawer/drawer.component';
+import { Router, RouterOutlet, RouterLinkWithHref, RouterLinkActive } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -15,8 +12,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { ToastService } from '../../../services/toast.service';
-import { DialogComponent } from '../../components/new/dialog/dialog.component';
-import { CarouselComponent } from "../../components/carousel/carousel.component";
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +19,9 @@ import { CarouselComponent } from "../../components/carousel/carousel.component"
     CommonModule,
     ButtonComponent,
     ReactiveFormsModule,
-    DrawerComponent,
-    InputFieldBaseComponent,
-    DialogComponent,
-    CarouselComponent,
     RouterOutlet,
-    RouterLinkWithHref
+    RouterLinkWithHref,
+    RouterLinkActive
 ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
@@ -39,9 +31,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   navItems = [
-    { label: 'Dashboard', link: '/home/dashboard', icon: 'speedometer'},
-    { label: 'CronJobs', link: '/home/cronjobs', icon: 'timer'},
-    { label: 'Execution Logs', link: '/home/logs', icon: 'read-cv-logo'},
+    { label: 'Dashboard', link: '/home/dashboard', icon: 'speedometer', exact: true },
+    { label: 'CronJobs', link: '/home/cronjobs', icon: 'timer', exact: false },
+    { label: 'Execution Logs', link: '/home/execution-logs', icon: 'read-cv-logo', exact: false },
   ]
 
   feedbackForm: FormGroup;
