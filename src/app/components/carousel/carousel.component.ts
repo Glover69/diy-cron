@@ -1,10 +1,11 @@
 import { Component, Input, ElementRef, ViewChild, AfterViewInit, OnDestroy, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {TimeUntilPipe} from '../../../utils/time-utils.pipe';
 
 @Component({
   selector: 'app-carousel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TimeUntilPipe],
   templateUrl: './carousel.component.html',
   styleUrl: './carousel.component.css'
 })

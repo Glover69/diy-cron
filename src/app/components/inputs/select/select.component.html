@@ -1,14 +1,27 @@
-<div class="input-group flex flex-col items-start w-full">
+<div class="input-group flex flex-col items-start w-full gap-2">
   @if (label) {
     <span class="text-sm G-Light text-main-black tracking-tight">{{ label }}</span>
   }
-  <select [value]="value" (change)="onChange($event)" (blur)="onTouched()" [disabled]="disabled" class="w-full rounded-lg text-sm G-Light py-2 px-3 border border-gray-200" name="" id="">
+  
+  <div class="relative w-full">
+    <select [value]="value" (change)="onChange($event)" (blur)="onTouched()" [disabled]="disabled" class="appearance-none w-full shadow-xs rounded-lg text-sm G-Light px-3.5 py-2.5 pr-10 border border-gray-300 bg-white" name="" id="">
+      @if (placeholder) {
+        <option class="text-regular-txt" [value]="null" disabled selected>{{ placeholder }}</option>
+      }
 
-    @if (placeholder) {
-      <option class="text-regular-txt" [value]="null" disabled selected>{{ placeholder }}</option>
-    }
-    @for (option of options; track $index) {
-      <option [value]="option">{{option}}</option>
-    }
-  </select>
+      @if (isSimpleData) {
+         @for (option of options; track $index) {
+        <option [value]="option">{{option}}</option>
+        }
+      } @else {
+        @for (option of options; track $index) {
+        <option [value]="option.value">{{option.label}}</option>
+        }
+      }
+     
+    </select>
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+      <i class="ph ph-caret-down"></i>
+    </div>
+  </div>
 </div>

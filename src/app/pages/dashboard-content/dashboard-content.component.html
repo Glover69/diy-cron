@@ -1,10 +1,10 @@
-<section class="">
+<section class="p-4 md:p-10">
     <div class="header w-full flex flex-col items-start">
       <span class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60">Here's what is happening with your cron jobs.</span>
         <span class="font-semibold font-sans flex flex-wrap text-3xl md:text-5xl tracking-tight text-gradient-fade">{{ greeting }}, {{first_name}}</span>
     </div>
-    
-    @if (isLoading) {
+
+    @if (isLoading()) {
       <!-- Skeleton state -->
       <div class="w-full h-full animate-pulse">
         <div class="mx-auto w-full">
@@ -35,23 +35,45 @@
        <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
     </div>
   } -->
-    @else {
+    @else if(!isLoading() && allCrons) {
 
     <!-- Three stats cards at the top -->
     <div class="stats-card-group flex flex-col md:flex-row flex-wrap items-center gap-8 w-full -mt-1 md:-mt-2">
-      @for (item of statCards; track $index) {
-        <div class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
-  
-          <i [ngClass]="`ph-duotone ph-${item.icon} text-4xl`"></i>
-  
+        <div #cardStat class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <i [ngClass]="`ph-duotone ph-package text-4xl`"></i>
+
           <div class="flex flex-col">
-            <span class="text-lg font-normal tracking-tight">{{item.label}}</span>
-            <span class="text-6xl font-bold">{{item.value}}</span>
+            <span class="text-lg font-normal tracking-tight">Total Jobs</span>
+            <span class="text-6xl font-bold">{{allCrons.length}}</span>
           </div>
-  
-          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/${item.img}.png`" alt="">
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/box.png`" alt="">
         </div>
-      }
+
+        <div #cardStat class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <i [ngClass]="`ph-duotone ph-infinity text-4xl`"></i>
+
+          <div class="flex flex-col">
+            <span class="text-lg font-normal tracking-tight">Active Jobs</span>
+            <span class="text-6xl font-bold">{{activeCrons}}</span>
+          </div>
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/infinity.png`" alt="">
+        </div>
+
+        <div #cardStat class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <i [ngClass]="`ph-duotone ph-timer text-4xl`"></i>
+
+          <div class="flex flex-col">
+            <span class="text-lg font-normal tracking-tight">Today's Executions</span>
+            <span class="text-6xl font-bold">4</span>
+          </div>
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/alarm.png`" alt="">
+        </div>
     </div>
 
     <!-- Upcoming jobs and health score check group -->
@@ -68,7 +90,7 @@
         </div>
 
 
-        <app-carousel style="width: stretch;" [items]="cronJobs" [speed]="0.4" #carousel></app-carousel>
+        <app-carousel style="width: stretch;" [items]="allCrons" [speed]="0.4" #carousel></app-carousel>
 
       </div>
 
@@ -82,7 +104,7 @@
           </div>
 
           <i [ngClass]="`ph-duotone ph-pulse text-4xl`"></i>
-  
+
           <div class="flex flex-col">
             <span class="text-lg font-normal tracking-tight">Health Score</span>
             <div class="score-group flex items-end">
@@ -97,9 +119,9 @@
               <i class="ph-duotone ph-trend-up"></i>
               <span class="text-sm">2%</span>
             </div>
-            
+
           </div>
-  
+
           <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/diagnosis.png`" alt="">
         </div>
       </div>
@@ -107,6 +129,6 @@
     </div>
 
 
- 
+
   }
 </section>

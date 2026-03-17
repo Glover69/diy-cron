@@ -18,8 +18,9 @@ import {NG_VALUE_ACCESSOR } from '@angular/forms';
 })
 export class SelectComponent {
   @Input() label: string = 'Label';
-  @Input() options: string[] = [];
+  @Input() options: string[] | any[] = [];
   @Input() placeholder: string = ''; // Optional placeholder
+  @Input() isSimpleData: boolean = true;
 
   // Internal state
   value: string | null = null;

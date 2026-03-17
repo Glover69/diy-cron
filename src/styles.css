@@ -18,6 +18,36 @@ body {
   font-optical-sizing: auto;
 }
 
+/* SF */
+
+@font-face {
+  font-family: 'SF-Regular';
+  src: url('/fonts/SF/SFPRODISPLAYREGULAR.OTF');
+}
+
+@font-face {
+  font-family: 'SF-Medium';
+  src: url('/fonts/SF/SFPRODISPLAYMEDIUM.OTF');
+}
+
+@font-face {
+  font-family: 'SF-Bold';
+  src: url('/fonts/SF/SFPRODISPLAYBOLD.OTF');
+}
+
+
+.SF-Regular{
+  font-family: 'SF-Regular';
+}
+
+.SF-Medium{
+  font-family: 'SF-Medium';
+}
+
+.SF-Bold{
+  font-family: 'SF-Bold';
+}
+
 
 @theme {
   /* COLORS */
@@ -72,6 +102,7 @@ body {
     "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol", "Noto Color Emoji";
   --font-console: "Inconsolata";
+  --font-sfm: "SF-Bold"
   --font-mono:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;

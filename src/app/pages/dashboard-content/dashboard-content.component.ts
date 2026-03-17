@@ -1,9 +1,11 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {Component, ElementRef, inject, NgZone, OnDestroy, OnInit, QueryList, signal, ViewChildren} from '@angular/core';
 import { CarouselComponent } from '../../components/carousel/carousel.component';
 import { ButtonComponent } from '../../components/new/button/button.component';
 import { CommonModule } from '@angular/common';
 import { GoogleAuthService } from '../../../services/google-auth.service';
-import { GoogleUser } from '../../../models/data.models';
+import { CronJob, GoogleUser } from '../../../models/data.models';
+import { CronService } from '../../../services/cron.service';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-dashboard-content',
@@ -12,19 +14,28 @@ import { GoogleUser } from '../../../models/data.models';
   styleUrl: './dashboard-content.component.css',
 })
 export class DashboardContentComponent implements OnInit, OnDestroy {
-  isLoading = false;
+  isLoading = signal(false);
   greeting = 'Hello';
   private greetingTimer?: number;
   user: GoogleUser | null = null;
   first_name?: string = '';
-   
-  googleAuthService = inject(GoogleAuthService)
 
-  statCards = [
-    { label: 'Total Jobs', value: '4', img: 'box', icon: 'package' },
-    { label: 'Active Jobs', value: '4', img: 'infinity', icon: 'infinity' },
-    { label: "Today's Executions", value: '4', img: 'alarm', icon: 'timer' },
-  ];
+  allCrons: CronJob[] = []
+  activeCrons: number | null = null;
+
+  googleAuthService = inject(GoogleAuthService)
+  cronService = inject(CronService)
+  private ngZone = inject(NgZone)
+
+  // Use ViewChildren to get a direct reference to card elements
+  @ViewChildren('cardStat') cardStatElements!: QueryList<ElementRef>;
+
+  // statCards = [
+  //   { label: 'Total Jobs', value: 4, img: 'box', icon: 'package' },
+  //   { label: 'Active Jobs', value: 3, img: 'infinity', icon: 'infinity' },
+  //   { label: "Today's Executions", value: 4, img: 'alarm', icon: 'timer' },
+  // ];
+
 
   cronJobs = [
     {
@@ -90,10 +101,9 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
 
     this.first_name = this.user?.name.split(' ')[0];
     if (this.user != null) {
-      
+      this.fetchCrons()
     } else {
-      // no user; stop loading so empty/login UI can show
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 
@@ -106,5 +116,48 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
     if (h >= 0 && h < 12) this.greeting = 'Good morning';
     else if (h >= 12 && h < 16) this.greeting = 'Good afternoon';
     else this.greeting = 'Good evening';
+  }
+
+
+  fetchCrons(){
+    this.isLoading.set(true)
+    this.cronService.getAllCronJobs().subscribe({
+      next: (res: CronJob[]) => {
+        console.log(res);
+        this.allCrons = res;
+        this.activeCrons = this.allCrons.filter(i => i.isActive).length;
+        this.isLoading.set(false);
+
+        // Wait for Angular to render the cards into the DOM, then animate
+        this.ngZone.runOutsideAngular(() => {
+          setTimeout(() => this.animateDashboardCards(), 0);
+        });
+
+      }, error: (err: any) => {
+        console.error("Failed to fetch users cron jobs: ", err);
+        this.isLoading.set(false);
+      }
+    })
+
+
+  }
+
+  animateDashboardCards(){
+    const cards = this.cardStatElements.toArray().map(i => i.nativeElement);
+
+    if (!cards.length) return;
+
+    gsap.fromTo(cards, {
+      opacity: 0,
+      y: 30,
+      scale: 0.95,
+    }, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.75,
+      ease: 'power2.inOut',
+      stagger: 0.1,
+    })
   }
 }

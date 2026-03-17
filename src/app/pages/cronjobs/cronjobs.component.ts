@@ -1,36 +1,66 @@
-import { Component } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import {Component, ElementRef, inject, NgZone, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {DatePipe, NgTemplateOutlet} from '@angular/common';
 import { ButtonComponent } from '../../components/new/button/button.component';
 import { TabGroupComponent } from '../../components/tab-group/tab-group.component';
 import { TabComponent } from '../../components/tab-group/tab/tab.component';
 import { CronJob } from '../../../models/data.models';
+import { SheetComponent } from "../../components/new/sheet/sheet.component";
+import {CronStateService} from '../../../services/cron-state.service';
+import {TimeUntilPipe} from '../../../utils/time-utils.pipe';
+import gsap from 'gsap';
 
 @Component({
   selector: 'app-cronjobs',
-  imports: [ButtonComponent, TabGroupComponent, TabComponent, NgTemplateOutlet],
+  imports: [ButtonComponent, TabGroupComponent, TabComponent, NgTemplateOutlet, SheetComponent, TimeUntilPipe, DatePipe],
   templateUrl: './cronjobs.component.html',
   styleUrl: './cronjobs.component.css'
 })
-export class CronjobsComponent {
+export class CronjobsComponent implements OnInit{
   isLoading = false;
+  sheetOpen: boolean = false;
+  currentSelectedJob!: CronJob;
+  cronState = inject(CronStateService)
+  private ngZone = inject(NgZone)
 
-  cronJobs: CronJob[] = [
-    { cronId: "1", httpMethod: 'GET', scheduleType: 'cron', isActive: true, cronName: 'Email Daily Report', endpointUrl: 'https://api.myapp.com/email', scheduleExpression: '0 9 * * *', scheduleLabel: 'Every day at 9:00 am', nextRunAt: '15h, 45m', status: 'active' },
-    { cronId: "2", httpMethod: 'GET', scheduleType: 'cron', isActive: true, cronName: 'Database Backup', endpointUrl: 'https://api.myapp.com/backup', scheduleExpression: '0 0 * * *', scheduleLabel: 'Every day at midnight', nextRunAt: '8h, 12m', status: 'active' },
-    { cronId: "3", httpMethod: 'GET', scheduleType: 'cron', isActive: true, cronName: 'Clear Cache', endpointUrl: 'https://api.myapp.com/cache/clear', scheduleExpression: '*/30 * * * *', scheduleLabel: 'Every 30 minutes', nextRunAt: '0h, 12m', status: 'active' },
-    { cronId: "4", httpMethod: 'GET', scheduleType: 'cron', isActive: false, cronName: 'Sync Inventory', endpointUrl: 'https://api.myapp.com/inventory/sync', scheduleExpression: '0 */6 * * *', scheduleLabel: 'Every 6 hours', nextRunAt: '3h, 05m', status: 'warning' },
-    { cronId: "5", httpMethod: 'GET', scheduleType: 'cron', isActive: false, cronName: 'Send Notifications', endpointUrl: 'https://api.myapp.com/notify', scheduleExpression: '0 8 * * 1', scheduleLabel: 'Every Monday at 8:00 am', nextRunAt: '2d, 14h', status: 'inactive' }
-  ];
+  @ViewChildren('CardJob') cardStatElements!: QueryList<ElementRef>;
 
-  get activeJobs(): CronJob[] {
-    return this.cronJobs.filter(j => j.status === 'active');
+  ngOnInit(){
+    this.cronState.load();
+    this.ngZone.runOutsideAngular(() => {
+      setTimeout(() => this.animateDashboardCards(), 0);
+    });
   }
 
-  get warningJobs(): CronJob[] {
-    return this.cronJobs.filter(j => j.status === 'warning');
+  deleteCron(){
+
   }
 
-  get inactiveJobs(): CronJob[] {
-    return this.cronJobs.filter(j => j.status === 'inactive');
+  animateDashboardCards(){
+    const cards = this.cardStatElements.toArray().map(i => i.nativeElement);
+
+    if (!cards.length) return;
+
+    gsap.fromTo(cards, {
+      opacity: 0,
+      y: 30,
+      scale: 0.95,
+    }, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.75,
+      ease: 'power2.inOut',
+      stagger: 0.1,
+    })
   }
+
+  getCurrentSelectedJob(job: CronJob){
+    this.currentSelectedJob = job;
+
+    if(this.currentSelectedJob != null){
+      this.sheetOpen = !this.sheetOpen
+    }
+  }
+
+
 }

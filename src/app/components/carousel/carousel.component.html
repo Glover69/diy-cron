@@ -22,7 +22,7 @@
 
         <div class="flex flex-col gap-1">
           <span class="text-sm text-gray-400 font-medium">Next Run</span>
-          <span class="text-4xl font-bold tracking-tight">{{item.nextRun}}</span>
+          <span class="text-4xl font-bold tracking-tight">{{item.nextRunAt | timeUntil }}</span>
           <span class="text-sm text-gray-400">From now</span>
         </div>
 
@@ -30,8 +30,8 @@
 
         <div class="footer flex items-center grow-0 justify-between">
           <div class="flex flex-col items-start w-fit">
-            <span class="font-console font-bold text-sm">{{item.name}}</span>
-            <span class="font-console text-xs text-gray-400 truncate max-w-[90%]">{{item.url}}</span>
+            <span class="font-console font-bold text-sm">{{item.cronName}}</span>
+            <span class="font-console text-xs text-gray-400 truncate max-w-3/4">{{item.endpointUrl}}</span>
             <span class="font-console text-xs text-gray-400">{{item.scheduleLabel}}</span>
           </div>
           <!-- <div [class]="item.status === 'active'

@@ -61,6 +61,7 @@ export type LoginResponse = {
 export type CronJob = {
     cronId: string;
     cronName: string;
+    description: string;
     endpointUrl: string;
     httpMethod: string;
     scheduleType: string;
@@ -71,6 +72,12 @@ export type CronJob = {
     status: 'active' | 'warning' | 'inactive'; // TBA
     createdAt?: string; 
     updatedAt?: string; 
+    timeoutSeconds?: number;
+    headers?: {key: string; value: string}[];
+    payload?: string;
+    retryCount?: number;
+    retryStrategy?: string;
+    notifyOn?: string;
 }
 
 
@@ -82,6 +89,12 @@ export type CronCreateRequest = {
     scheduleType: string;
     scheduleExpression: string;
     isActive: boolean;
+    timeoutSeconds?: number;
+    headers?: {key: string; value: string}[];
+    payload?: string;
+    retryCount?: number;
+    retryStrategy?: string;
+    notifyOn?: string;
 }
 
 export type ToastProps = {
