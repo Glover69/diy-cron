@@ -19,7 +19,7 @@ export class CronService {
   }
 
   addCronJobs(data: any): Observable<CronCreateRequest>{
-    return this.http.post<CronCreateRequest>(`${this.apiURL}/cron/create`, { data }, { withCredentials: true })
+    return this.http.post<CronCreateRequest>(`${this.apiURL}/cron/create`, data , { withCredentials: true })
   }
 
 }

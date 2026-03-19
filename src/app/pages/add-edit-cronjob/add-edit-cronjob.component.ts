@@ -68,7 +68,27 @@ export class AddEditCronjobComponent {
   }
 
   onSubmit() {
+    // if (this.cronForm.invalid) {
+    //   this.cronForm.markAllAsTouched();
+    //   return;
+    // }
+
     if (this.cronForm.invalid) {
+      // Debug top-level controls
+      Object.keys(this.cronForm.controls).forEach(key => {
+        const controlErrors = this.cronForm.get(key)?.errors;
+        if (controlErrors) {
+          console.error(`Field invalid: ${key}`, controlErrors);
+        }
+      });
+
+      // Debug header array controls
+      this.headersArray.controls.forEach((group, index) => {
+        if (group.invalid) {
+           console.error(`Header at index ${index} is invalid. Key: ${group.get('key')?.value}, Value: ${group.get('value')?.value}`);
+        }
+      });
+
       this.cronForm.markAllAsTouched();
       return;
     }
@@ -85,6 +105,16 @@ export class AddEditCronjobComponent {
       finalScheduleExpression = rawValue.oneTimeDate;
     }
 
+    // Transform [{key: 'Auth', value: 'Token'}] into { 'Auth': 'Token' }
+    const formattedHeaders: Record<string, string> = {};
+    if (rawValue.headers && Array.isArray(rawValue.headers)) {
+      rawValue.headers.forEach((h: {key: string, value: string}) => {
+        if (h.key && h.key.trim() !== '') {
+          formattedHeaders[h.key] = h.value;
+        }
+      });
+    }
+
     const requestData: CronCreateRequest = {
       cronName: rawValue.cronName,
       description: rawValue.description,
@@ -94,7 +124,7 @@ export class AddEditCronjobComponent {
       scheduleExpression: finalScheduleExpression,
       isActive: rawValue.isActive,
       timeoutSeconds: rawValue.timeoutSeconds,
-      headers: rawValue.headers,
+      headers: formattedHeaders,
       payload: rawValue.payload,
       retryCount: rawValue.retryCount,
       retryStrategy: rawValue.retryStrategy,
@@ -104,17 +134,12 @@ export class AddEditCronjobComponent {
     this.cronService.addCronJobs(requestData).subscribe({
       next: (res: any) => {
         console.log(res)
+        this.isSubmitting = false;
       }, error: (err: any) => {
         console.error(err);
+        this.isSubmitting = false;
       }
-    })
-
-    // // Simulate API call
-    // setTimeout(() => {
-    //   console.log('Form Submitted!', requestData);
-    //   this.isSubmitting = false;
-    //   // Handle success (e.g., toast, navigation)
-    // }, 1500);
+    });
   }
 
   get f() {
@@ -127,7 +152,7 @@ export class AddEditCronjobComponent {
 
   addHeader() {
     this.headersArray.push(this.fb.group({
-      key: ['', Validators.required],
+      key: [this.headerKeyOptions[0], Validators.required],
       value: ['', Validators.required]
     }));
   }

@@ -90,7 +90,7 @@ export type CronCreateRequest = {
     scheduleExpression: string;
     isActive: boolean;
     timeoutSeconds?: number;
-    headers?: {key: string; value: string}[];
+    headers?: Record<string, string>;
     payload?: string;
     retryCount?: number;
     retryStrategy?: string;

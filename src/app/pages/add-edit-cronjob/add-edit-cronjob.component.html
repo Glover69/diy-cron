@@ -1,5 +1,5 @@
 <div class="h-full overflow-y-auto w-full">
-  <div class="max-w-7xl flex flex-col items-start px-4 md:px-10 py-6 h-full">
+  <div class="max-w-7xl flex flex-col items-start px-4 md:px-10 py-6 h-full mt-4">
 
   <div class="header w-full flex items-start justify-between">
     <div class="left flex flex-col items-start">
@@ -273,7 +273,7 @@
             text="Create Cron Job"
             [icon]="'false'"
             [loading]="isSubmitting"
-            [disabled]="cronForm.invalid || isSubmitting">
+            [disabled]="isSubmitting">
           </app-button>
         </div>
       </div>
