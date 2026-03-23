@@ -8,6 +8,7 @@ import { SheetComponent } from "../../components/new/sheet/sheet.component";
 import {CronStateService} from '../../../services/cron-state.service';
 import {TimeUntilPipe} from '../../../utils/time-utils.pipe';
 import gsap from 'gsap';
+import { CronService } from '../../../services/cron.service';
 
 @Component({
   selector: 'app-cronjobs',
@@ -20,6 +21,7 @@ export class CronjobsComponent implements OnInit{
   sheetOpen: boolean = false;
   currentSelectedJob!: CronJob;
   cronState = inject(CronStateService)
+  cronService = inject(CronService)
   private ngZone = inject(NgZone)
 
   @ViewChildren('CardJob') cardStatElements!: QueryList<ElementRef>;
@@ -31,8 +33,14 @@ export class CronjobsComponent implements OnInit{
     });
   }
 
-  deleteCron(){
-
+  deleteCron(cronId: string){
+    this.cronService.deleteCronJob(cronId).subscribe({
+      next: (res: any) => {
+        console.log(res)
+      }, error: (err: any) => {
+        console.error(err);
+      }
+    })
   }
 
   animateDashboardCards(){

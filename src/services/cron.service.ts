@@ -22,4 +22,8 @@ export class CronService {
     return this.http.post<CronCreateRequest>(`${this.apiURL}/cron/create`, data , { withCredentials: true })
   }
 
+  deleteCronJob(cronId: string): Observable<void>{
+    return this.http.delete<void>(`${this.apiURL}/cron/delete?cronId=${cronId}`, { withCredentials: true })
+  }
+
 }
