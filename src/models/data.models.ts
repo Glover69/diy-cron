@@ -109,7 +109,16 @@ export type ToastProps = {
 }
 
 export type LogsResponse = {
-    name: string
+    name: string;
     responseTime: string;
     statusCode: number;
+}
+
+export type ExecutionLogs = {
+  job: CronJob;
+  status: string;
+  httpStatusCode: number;
+  responseTimeMS: number;
+  responseBody: string;
+  errorMessage: string;
 }

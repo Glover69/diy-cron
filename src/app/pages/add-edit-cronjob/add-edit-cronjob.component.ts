@@ -7,6 +7,8 @@ import { ButtonComponent } from '../../components/new/button/button.component';
 import { CronCreateRequest } from '../../../models/data.models';
 import { EditorComponent } from 'ngx-monaco-editor-v2';
 import { CronService } from '../../../services/cron.service';
+import { CronStateService } from '../../../services/cron-state.service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-add-edit-cronjob',
@@ -19,6 +21,8 @@ export class AddEditCronjobComponent {
   cronForm: FormGroup;
   isSubmitting = false;
   cronService = inject(CronService);
+  cronState = inject(CronStateService);
+  router = inject(Router);
 
   editorOptions = {theme: 'vs-dark', language: 'json', automaticLayout: true, minimap: {enabled: false}, scrollBeyondLastLine: false, formatOnPaste: true, formatOnType: true};
 
@@ -135,6 +139,8 @@ export class AddEditCronjobComponent {
       next: (res: any) => {
         console.log(res)
         this.isSubmitting = false;
+        this.cronState.refresh();
+        this.router.navigate(['/cronjobs'])
       }, error: (err: any) => {
         console.error(err);
         this.isSubmitting = false;

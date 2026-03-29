@@ -1,6 +1,6 @@
 {
     "/api/**": {
-        "target": "http://diy-cron-backend-env.eba-w3epaqqc.eu-north-1.elasticbeanstalk.com/api",
+        "target": "http://localhost:8080/api",
         "secure": false,
         "changeOrigin": true,
         "pathRewrite": {
