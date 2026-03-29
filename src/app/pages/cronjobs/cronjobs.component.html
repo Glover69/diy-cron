@@ -1,0 +1,652 @@
+<section class="p-4 md:p-10">
+  <div class="header w-full flex items-start justify-between mb-6">
+    <div class="left flex flex-col items-start">
+      <span
+        class="font-semibold font-sans flex flex-wrap text-3xl tracking-tight"
+        >CronJobs</span
+      >
+      <span
+        class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60"
+        >Your created jobs.</span
+      >
+    </div>
+
+    <app-button
+    [routerLink]="'create'"
+      class="w-fit"
+      size="sm"
+      type="button"
+      text="Create new job"
+      hierarchy="primary"
+      icon="leading"
+      iconName="plus"
+    ></app-button>
+  </div>
+
+  @if (isLoading) {
+    <!-- Skeleton state -->
+    <div class="w-full h-full animate-pulse">
+      <div class="mx-auto w-full">
+        <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
+        <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
+
+        <div class="h-40 w-full rounded-lg bg-gray-200 my-8"></div>
+
+        <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
+        <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div class="h-40 rounded-lg bg-gray-200"></div>
+          <div class="h-40 rounded-lg bg-gray-200"></div>
+          <div class="h-40 rounded-lg bg-gray-200"></div>
+          <div class="h-40 rounded-lg bg-gray-200"></div>
+          <div class="h-40 rounded-lg bg-gray-200"></div>
+          <div class="h-40 rounded-lg bg-gray-200"></div>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- @else if (schedules.length === 0) {
+    <div class="content-for-empty-dashboard w-full flex-1 flex flex-col items-center justify-center fade-in">
+      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
+      <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No Schedules Available</span>
+      <span class="text-gray-600 text-sm lg:text-base xl:text-2xl opacity-60 font-regular tracking-tight">Your completed schedules will appear here when done!</span>
+       <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
+    </div>
+  } -->
+  @else {
+    <app-tab-group class="mt-12">
+      <!-- All Jobs -->
+      <app-tab label="Overview" icon="squares-four">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (job of cronState.cronJobs(); track job.cronId) {
+            <ng-container
+              *ngTemplateOutlet="jobCard; context: { $implicit: job }"
+            ></ng-container>
+          }
+        </div>
+      </app-tab>
+
+      <!-- Active -->
+      <app-tab label="Active" icon="activity" [badge]="cronState.activeJobs().length">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (job of cronState.activeJobs(); track job.cronId) {
+            <ng-container
+              *ngTemplateOutlet="jobCard; context: { $implicit: job }"
+            ></ng-container>
+          }
+        </div>
+      </app-tab>
+
+      <!-- Needs Attention -->
+      <app-tab label="Issues" icon="warning" [badge]="cronState.warningJobs().length">
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (job of cronState.warningJobs(); track job.cronId) {
+            <ng-container
+              *ngTemplateOutlet="jobCard; context: { $implicit: job }"
+            ></ng-container>
+          } @empty {
+            <div
+              class="col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center"
+            >
+              <i class="ph-duotone ph-check-circle text-5xl text-green-400"></i>
+              <span class="font-bold text-gray-600">No issues</span>
+              <span class="text-sm text-gray-400"
+                >All your jobs are running fine</span
+              >
+            </div>
+          }
+        </div>
+      </app-tab>
+
+      <!-- Inactive -->
+      <app-tab
+        label="Inactive"
+        icon="pause-circle"
+        [badge]="cronState.inactiveJobs().length"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (job of cronState.inactiveJobs(); track job.cronId) {
+            <ng-container
+              *ngTemplateOutlet="jobCard; context: { $implicit: job }"
+            ></ng-container>
+          } @empty {
+            <div
+              class="md:col-span-1 lg:col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center"
+            >
+              <i class="ph-duotone ph-play-circle text-5xl text-gray-300"></i>
+              <span class="font-bold text-gray-600">No inactive jobs</span>
+              <span class="text-sm text-gray-400"
+                >All your jobs are currently enabled</span
+              >
+            </div>
+          }
+        </div>
+      </app-tab>
+    </app-tab-group>
+  }
+
+  @if (currentSelectedJob) {
+    <app-sheet [(open)]="sheetOpen">
+      <div
+        class="overflow-auto scrollbar-none w-full flex flex-col items-start gap-8"
+      >
+        <div
+          class="header flex flex-col items-start gap-6 w-full p-4 md:px-8 md:pt-8"
+        >
+          <div class="flex items-center gap-4">
+            <i class="ph-duotone ph-package text-4xl"></i>
+            <div class="right flex flex-col items-start">
+            <span class="font-console text-sm text-gray-400"
+            >Cron Job Details</span
+            >
+              <span class="font-bold text-2xl text-gray-800 tracking-tight">{{
+                  currentSelectedJob.cronName
+                }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-10 w-full">
+            <!-- Cron Status -->
+            <div class="left flex flex-col items-start gap-1">
+              <span class="font-console text-sm text-gray-400">Cron Status</span>
+              <span
+                class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+                [class]="
+                currentSelectedJob.isActive
+                  ? 'bg-green-100 text-green-700'
+                  : currentSelectedJob.isActive
+                    ? 'bg-orange-100 text-orange-700'
+                    : 'bg-gray-100 text-gray-500'
+              "
+              >
+              <i
+                [class]="
+                  currentSelectedJob.isActive
+                    ? 'ph ph-activity'
+                    : currentSelectedJob.isActive
+                      ? 'ph ph-warning'
+                      : 'ph ph-pause'
+                "
+              ></i>
+                {{
+                  currentSelectedJob.isActive
+                    ? "Active"
+                    : currentSelectedJob.isActive == false
+                      ? "Warning"
+                      : "Inactive"
+                }}
+            </span>
+            </div>
+
+            <!-- Runs -->
+            <!-- <div class="right flex flex-col items-start gap-1">
+              <span class="font-console text-sm text-gray-400">Runs</span>
+              <span class="font-console font-medium text-sm shrink-0"
+              >{{currentSelectedJob.scheduleLabel}}</span
+              >
+            </div> -->
+
+            <!-- Created date -->
+            <div class="right flex flex-col items-start gap-1">
+              <span class="font-console text-sm text-gray-400">Date Created</span>
+              <span class="font-console font-medium text-sm"
+              >25 Jan 2026, 02:34:23</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="flex w-full flex-col items-start gap-4">
+          <app-tab-group class="w-full">
+            <!-- Overview -->
+            <app-tab label="Overview" icon="squares-four">
+              <div class="flex flex-col items-start gap-8 w-full px-8 py-4">
+
+                <!-- Description -->
+                @if (currentSelectedJob.description) {
+                  <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-3">
+                    <div class="flex flex-col items-start">
+                      <span class="text-base font-bold">Description</span>
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ currentSelectedJob.description }}</p>
+                  </div>
+                }
+
+                <!-- Schedule section -->
+                <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-6">
+                  <div class="flex flex-col items-start">
+                    <span class="text-base font-bold">Schedule</span>
+                    <span class="text-sm text-gray-500">Time schedule for this cron.</span>
+                  </div>
+
+                  <div class="body grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Schedule Type</span>
+                      <span class="text-2xl font-semibold capitalize">{{ currentSelectedJob.scheduleType }}</span>
+                    </div>
+
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Schedule Expression</span>
+                      <span class="text-2xl font-semibold font-console">{{ currentSelectedJob.scheduleExpression }}</span>
+                    </div>
+
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Next run</span>
+                      <span class="text-3xl font-semibold">{{ currentSelectedJob?.nextRunAt | timeUntil }}</span>
+                      <span class="text-xs text-gray-400 mt-1">{{ currentSelectedJob?.nextRunAt | date: 'MMM d, y, h:mm:ss a' }}</span>
+                    </div>
+
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Timezone</span>
+                      <span class="text-3xl font-semibold">UTC</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Metadata section -->
+                <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-6">
+                  <div class="flex flex-col items-start">
+                    <span class="text-base font-bold">Metadata</span>
+                    <span class="text-sm text-gray-500">Job creation and update information.</span>
+                  </div>
+
+                  <div class="body grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    @if (currentSelectedJob.createdAt) {
+                      <div class="item flex flex-col items-start gap-1">
+                        <span class="text-sm text-gray-400">Created</span>
+                        <span class="font-semibold">{{ currentSelectedJob.createdAt | date: 'MMM d, y, h:mm:ss a' }}</span>
+                      </div>
+                    }
+
+                    @if (currentSelectedJob.updatedAt) {
+                      <div class="item flex flex-col items-start gap-1">
+                        <span class="text-sm text-gray-400">Last Updated</span>
+                        <span class="font-semibold">{{ currentSelectedJob.updatedAt | date: 'MMM d, y, h:mm:ss a' }}</span>
+                      </div>
+                    }
+
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Job ID</span>
+                      <span class="font-console text-xs text-gray-600">{{ currentSelectedJob.cronId }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Performance section -->
+                <div class="section-single flex w-full flex-col items-start gap-6">
+                  <div class="flex flex-col items-start">
+                    <span class="text-base font-bold">Performance</span>
+                    <span class="text-sm text-gray-500">Performance metrics for this cron.</span>
+                  </div>
+
+                  <div class="body grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Success rate</span>
+                      <span class="text-4xl font-semibold">{{currentSelectedJob.successRate}}%</span>
+                    </div>
+
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Total Executions</span>
+                      <span class="text-4xl font-semibold">{{currentSelectedJob.totalExecutions}}</span>
+                    </div>
+
+                    <div class="item flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Avg. response time</span>
+                      <span class="text-4xl font-semibold">{{currentSelectedJob.avgResponseTimeMs}}ms</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-3 pt-4 border-t border-gray-200">
+                  <app-button 
+                    [routerLink]="['/cronjobs', 'edit', currentSelectedJob.cronId]"
+                    [size]="'sm'" 
+                    [text]="'Edit'" 
+                    [hierarchy]="'secondary'"
+                    icon="leading" 
+                    iconName="pencil">
+                  </app-button>
+                  <app-button 
+                    (clicked)="deleteCron(currentSelectedJob.cronId)" 
+                    [size]="'sm'" 
+                    [text]="'Delete'" 
+                    [hierarchy]="'tertiary'"
+                    icon="leading" 
+                    iconName="trash">
+                  </app-button>
+                </div>
+
+              </div>
+            </app-tab>
+
+            <!-- Configuration -->
+            <app-tab label="Configuration" icon="gear">
+              <div class="flex flex-col items-start gap-8 w-full px-8 py-4">
+                <!-- Endpoint details -->
+                <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-6">
+                  <div class="flex flex-col items-start">
+                    <span class="text-base font-bold">Endpoint</span>
+                    <span class="text-sm text-gray-500">HTTP endpoint configuration.</span>
+                  </div>
+
+                  <div class="flex flex-col items-start gap-1 w-full">
+                    <span class="text-sm text-gray-400">URL</span>
+                    <a 
+                      [href]="currentSelectedJob.endpointUrl" 
+                      target="_blank" 
+                      class="text-sm font-semibold text-blue-600 hover:text-blue-700 underline break-all">
+                      {{ currentSelectedJob.endpointUrl }}
+                    </a>
+                  </div>
+
+                  <div class="flex flex-col items-start gap-1">
+                    <span class="text-sm text-gray-400">HTTP Method</span>
+                    <span 
+                      class="font-semibold text-lg px-3 py-1 rounded-md font-console"
+                      [class]="
+                        currentSelectedJob.httpMethod === 'GET' ? 'bg-blue-100 text-blue-700' :
+                        currentSelectedJob.httpMethod === 'POST' ? 'bg-green-100 text-green-700' :
+                        currentSelectedJob.httpMethod === 'PUT' ? 'bg-orange-100 text-orange-700' :
+                        currentSelectedJob.httpMethod === 'DELETE' ? 'bg-red-100 text-red-700' :
+                        'bg-gray-100 text-gray-700'
+                      ">
+                      {{ currentSelectedJob.httpMethod }}
+                    </span>
+                  </div>
+
+                  @if (currentSelectedJob.timeoutSeconds) {
+                    <div class="flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Timeout</span>
+                      <span class="font-semibold text-lg">{{ currentSelectedJob.timeoutSeconds }}s</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Headers (if any) -->
+                @if (currentSelectedJob.headers && currentSelectedJob.headers.length > 0) {
+                  <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-6">
+                    <div class="flex flex-col items-start">
+                      <span class="text-base font-bold">Headers</span>
+                      <span class="text-sm text-gray-500">Request headers sent with each execution.</span>
+                    </div>
+
+                    <div class="w-full flex flex-col gap-2">
+                      @for (header of currentSelectedJob.headers; track header.key) {
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-md border border-gray-200">
+                          <span class="font-console text-sm font-semibold text-gray-700 min-w-[120px]">{{ header.key }}:</span>
+                          <span class="font-console text-sm text-gray-600 break-all">{{ header.value }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Request Body (POST/PUT) -->
+                @if ((currentSelectedJob.httpMethod === 'POST' || currentSelectedJob.httpMethod === 'PUT') && currentSelectedJob.payload) {
+                  <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-6">
+                    <div class="flex flex-col items-start">
+                      <span class="text-base font-bold">Request Body</span>
+                      <span class="text-sm text-gray-500">Payload sent with each request.</span>
+                    </div>
+
+                    <pre class="w-full p-4 bg-gray-900 text-green-400 rounded-md overflow-x-auto text-xs font-console">{{ currentSelectedJob.payload }}</pre>
+                  </div>
+                }
+
+                <!-- Retry Configuration -->
+                @if (currentSelectedJob.retryCount || currentSelectedJob.retryStrategy) {
+                  <div class="section-single border-b border-dashed border-gray-400 pb-8 flex w-full flex-col items-start gap-6">
+                    <div class="flex flex-col items-start">
+                      <span class="text-base font-bold">Retry Configuration</span>
+                      <span class="text-sm text-gray-500">Retry behavior on failure.</span>
+                    </div>
+
+                    <div class="body grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                      @if (currentSelectedJob.retryCount) {
+                        <div class="item flex flex-col items-start gap-1">
+                          <span class="text-sm text-gray-400">Retry Count</span>
+                          <span class="text-3xl font-semibold">{{ currentSelectedJob.retryCount }}</span>
+                        </div>
+                      }
+
+                      @if (currentSelectedJob.retryStrategy) {
+                        <div class="item flex flex-col items-start gap-1">
+                          <span class="text-sm text-gray-400">Retry Strategy</span>
+                          <span class="text-lg font-semibold capitalize">{{ currentSelectedJob.retryStrategy }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Notifications -->
+                @if (currentSelectedJob.notifyOn) {
+                  <div class="section-single flex w-full flex-col items-start gap-6">
+                    <div class="flex flex-col items-start">
+                      <span class="text-base font-bold">Notifications</span>
+                      <span class="text-sm text-gray-500">When to send notifications.</span>
+                    </div>
+
+                    <div class="flex flex-col items-start gap-1">
+                      <span class="text-sm text-gray-400">Notify On</span>
+                      <span class="text-lg font-semibold capitalize">{{ currentSelectedJob.notifyOn }}</span>
+                    </div>
+                  </div>
+                }
+
+              </div>
+            </app-tab>
+
+            <!-- Logs -->
+            <app-tab label="Logs" icon="files">
+              <div class="flex flex-col items-start gap-4 w-full px-4 md:px-8 py-4">
+                
+                <!-- Filters Header -->
+                <div class="flex items-center justify-between w-full pb-3 border-b border-gray-200">
+                  <span class="text-sm font-semibold text-gray-500">Execution History ({{ totalLogItems }})</span>
+                  
+                  <div class="flex items-center gap-2">
+                    <select 
+                      (change)="changeLogTimeframeFilter($event)" 
+                      [value]="logTimeframeFilter"
+                      class="text-xs border border-gray-300 rounded-md px-2 py-1 bg-white outline-none focus:border-gray-500 cursor-pointer">
+                      <option value="ALL">All Time</option>
+                      <option value="TODAY">Today</option>
+                      <option value="YESTERDAY">Since Yesterday</option>
+                      <option value="LAST_7_DAYS">Last 7 Days</option>
+                      <option value="LAST_30_DAYS">Last 30 Days</option>
+                    </select>
+
+                    <select 
+                      (change)="changeLogStatusFilter($event)" 
+                      [value]="logStatusFilter"
+                      class="text-xs border border-gray-300 rounded-md px-2 py-1 bg-white outline-none focus:border-gray-500 cursor-pointer">
+                      <option value="ALL">All Status</option>
+                      <option value="SUCCESS">Success</option>
+                      <option value="FAILURE">Failure</option>
+                    </select>
+                  </div>
+                </div>
+
+                @if (currentSelectedLogs.length === 0) {
+                  <div class="w-full flex flex-col items-center justify-center py-16 gap-3">
+                    <i class="ph-duotone ph-files text-5xl text-gray-300"></i>
+                    <span class="font-bold text-gray-600">No logs found</span>
+                    <span class="text-sm text-gray-400">
+                      {{ (logStatusFilter === 'ALL' && logTimeframeFilter === 'ALL') ? "This job hasn't been executed yet." : "No logs match the selected filters." }}
+                    </span>
+                  </div>
+                } @else {
+                  <div class="w-full flex flex-col gap-3">
+                    @for (log of currentSelectedLogs; track log.logId) {
+                      <div class="w-full flex flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-300 transition-colors">
+                        
+                        <!-- Top Header -->
+                        <div class="flex items-center justify-between w-full mb-3">
+                          <div class="flex items-center gap-3">
+                            <span 
+                              class="text-xs font-bold px-2 py-0.5 rounded-md border"
+                              [class]="getStatusBadgeClass(log.status, log.httpStatusCode)">
+                              {{ log.httpStatusCode }}
+                            </span>
+                            <span class="text-sm font-semibold text-gray-700">{{ log.status }}</span>
+                          </div>
+                          <span class="text-xs text-gray-500">{{ log.executedAt | date: 'MMM d, y, h:mm:ss a' }}</span>
+                        </div>
+
+                        <!-- Mid Stats -->
+                        <div class="flex items-center gap-6 mb-3 text-sm">
+                          <div class="flex items-center gap-1.5 text-gray-500">
+                            <i class="ph ph-clock text-gray-400"></i>
+                            <span class="font-console">{{ log.responseTimeMS }}ms</span>
+                          </div>
+                        </div>
+
+                        <!-- Response Body Snippet -->
+                        @if (log.responseBody) {
+                          <div class="mt-2">
+                            <span class="text-xs font-semibold text-gray-500 mb-1 block">Response:</span>
+                            <pre class="w-full p-3 bg-gray-50 border border-gray-100 text-gray-700 rounded-md overflow-x-auto text-xs font-console max-h-32 overflow-y-auto">{{ log.responseBody }}</pre>
+                          </div>
+                        }
+
+                        @if (log.errorMessage) {
+                          <div class="mt-2">
+                            <span class="text-xs font-semibold text-red-500 mb-1 block">Error:</span>
+                            <pre class="w-full p-3 bg-red-50 border border-red-100 text-red-700 rounded-md overflow-x-auto text-xs font-console max-h-32 overflow-y-auto">{{ log.errorMessage }}</pre>
+                          </div>
+                        }
+
+                      </div>
+                    }
+
+                    <!-- Pagination Controls -->
+                    @if (totalLogPages > 1) {
+                      <div class="flex items-center justify-between w-full pt-4 mt-2 border-t border-gray-100">
+                        <span class="text-xs text-gray-500">Page {{ currentLogPage + 1 }} of {{ totalLogPages }}</span>
+                        <div class="flex items-center gap-2">
+                          <button 
+                            (click)="changeLogPage(currentLogPage - 1)" 
+                            [disabled]="currentLogPage === 0"
+                            class="px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            Previous
+                          </button>
+                          <button 
+                            (click)="changeLogPage(currentLogPage + 1)" 
+                            [disabled]="currentLogPage >= totalLogPages - 1"
+                            class="px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            Next
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+              </div>
+            </app-tab>
+
+            <!-- Stats -->
+            <app-tab label="Stats" icon="graph">
+              <div
+                class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"
+              ></div>
+            </app-tab>
+          </app-tab-group>
+        </div>
+      </div>
+    </app-sheet>
+  }
+
+</section>
+
+<!-- Job card template -->
+<ng-template #jobCard let-job>
+  <div #CardJob
+    (click)="getCurrentSelectedJob(job)"
+    class="job-card cursor-pointer rounded-lg border border-border-card bg-white shadow-card overflow-hidden relative flex flex-col"
+  >
+    <i
+      class="ph-duotone ph-package absolute -bottom-10 -right-6 text-[8rem] opacity-20"
+    ></i>
+
+    <!-- Card top bar -->
+    <div
+      class="h-1.5 w-full"
+      [class]="
+        job.isActive
+          ? 'bg-green-600'
+          : job.status === 'warning'
+            ? 'bg-orange-600'
+            : 'bg-gray-400'
+      "
+    ></div>
+
+    <div class="p-4 flex flex-col gap-3 flex-1">
+      <!-- Name + status badge -->
+      <div class="flex items-start w-full justify-between">
+        <div class="left-side flex flex-col items-start gap-1 w-full max-w-3/4">
+          <span class="font-bold text-lg leading-tight">{{
+            job.cronName
+          }}</span>
+
+          <div class="flex items-center gap-1.5 text-xs w-full text-gray-400">
+            <i class="ph ph-link shrink-0"></i>
+            <span class="font-console truncate max-w-4/5">{{ job.endpointUrl }}</span>
+          </div>
+
+          <div class="flex items-center gap-1.5 text-xs text-gray-500">
+            <i class="ph ph-timer shrink-0"></i>
+            <span class="font-console font-medium">{{ job.scheduleType === 'one-time' ?
+              (job.scheduleExpression | date: 'medium') : job.scheduleExpression
+            }}</span>
+            <span class="text-gray-300">·</span>
+            <span class="truncate">{{ job.scheduleLabel }}</span>
+          </div>
+        </div>
+
+        <span
+          class="shrink-0! inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+          [class]="
+            job.isActive
+              ? 'bg-green-100 text-green-700'
+              : job.status === 'warning'
+                ? 'bg-orange-100 text-orange-700'
+                : 'bg-gray-100 text-gray-500'
+          "
+        >
+          <i
+            [class]="
+              job.isActive
+                ? 'ph ph-activity'
+                : job.status === 'warning'
+                  ? 'ph ph-warning'
+                  : 'ph ph-pause'
+            "
+          ></i>
+          {{
+            job.isActive
+              ? "Active"
+              : job.status === "warning"
+                ? "Warning"
+                : "Inactive"
+          }}
+        </span>
+      </div>
+
+      <!-- Footer -->
+      <div
+        class="mt-auto w-3/5 pt-2 border-t border-gray-100 flex items-center justify-between"
+      >
+        <div class="flex flex-col">
+          <span class="text-xs text-gray-400">Next run</span>
+          <span class="text-2xl tracking-tighter font-bold">{{
+            job.nextRunAt | timeUntil
+          }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

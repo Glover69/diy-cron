@@ -5,6 +5,10 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+import { CronjobsComponent } from './pages/cronjobs/cronjobs.component';
+import { DashboardContentComponent } from './pages/dashboard-content/dashboard-content.component';
+import { ExecutionLogsComponent } from './pages/execution-logs/execution-logs.component';
+import { AddEditCronjobComponent } from './pages/add-edit-cronjob/add-edit-cronjob.component';
 
 export const routes: Routes = [
   { path: 'auth', component: AuthComponent },
@@ -14,7 +18,14 @@ export const routes: Routes = [
   { 
     path: 'home', 
     component: DashboardComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: DashboardContentComponent },
+      { path: 'cronjobs', component: CronjobsComponent },
+      { path: 'execution-logs', component: ExecutionLogsComponent },
+      { path: 'cronjobs/create', component: AddEditCronjobComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full'}
+    ]
   },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/home' }

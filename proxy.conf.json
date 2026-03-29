@@ -1,6 +1,6 @@
 {
     "/api/**": {
-        "target": "https://centralbackend.vercel.app/api",
+        "target": "http://diy-cron-backend-env.eba-w3epaqqc.eu-north-1.elasticbeanstalk.com/api",
         "secure": false,
         "changeOrigin": true,
         "pathRewrite": {

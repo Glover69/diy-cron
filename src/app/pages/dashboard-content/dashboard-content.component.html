@@ -1,0 +1,134 @@
+<section class="p-4 md:p-10">
+    <div class="header w-full flex flex-col items-start">
+      <span class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60">Here's what is happening with your cron jobs.</span>
+        <span class="font-semibold font-sans flex flex-wrap text-3xl md:text-5xl tracking-tight text-gradient-fade">{{ greeting }}, {{first_name}}</span>
+    </div>
+
+    @if (isLoading()) {
+      <!-- Skeleton state -->
+      <div class="w-full h-full animate-pulse">
+        <div class="mx-auto w-full">
+          <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
+          <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
+
+          <div class="h-40 w-full rounded-lg bg-gray-200 my-8"></div>
+
+          <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
+          <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+            <div class="h-40 rounded-lg bg-gray-200"></div>
+          </div>
+        </div>
+      </div>
+    }
+    <!-- @else if (schedules.length === 0) {
+    <div class="content-for-empty-dashboard w-full flex-1 flex flex-col items-center justify-center fade-in">
+      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
+      <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No Schedules Available</span>
+      <span class="text-gray-600 text-sm lg:text-base xl:text-2xl opacity-60 font-regular tracking-tight">Your completed schedules will appear here when done!</span>
+       <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
+    </div>
+  } -->
+    @else if(!isLoading() && allCrons) {
+
+    <!-- Three stats cards at the top -->
+    <div class="stats-card-group flex flex-col md:flex-row flex-wrap items-center gap-8 w-full -mt-1 md:-mt-2">
+        <div #cardStat class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <i [ngClass]="`ph-duotone ph-package text-4xl`"></i>
+
+          <div class="flex flex-col">
+            <span class="text-lg font-normal tracking-tight">Total Jobs</span>
+            <span class="text-6xl font-bold">{{allCrons.length}}</span>
+          </div>
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/box.png`" alt="">
+        </div>
+
+        <div #cardStat class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <i [ngClass]="`ph-duotone ph-infinity text-4xl`"></i>
+
+          <div class="flex flex-col">
+            <span class="text-lg font-normal tracking-tight">Active Jobs</span>
+            <span class="text-6xl font-bold">{{activeCrons}}</span>
+          </div>
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/infinity.png`" alt="">
+        </div>
+
+        <div #cardStat class="card-stat rounded-lg border flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <i [ngClass]="`ph-duotone ph-timer text-4xl`"></i>
+
+          <div class="flex flex-col">
+            <span class="text-lg font-normal tracking-tight">Today's Executions</span>
+            <span class="text-6xl font-bold">4</span>
+          </div>
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/alarm.png`" alt="">
+        </div>
+    </div>
+
+    <!-- Upcoming jobs and health score check group -->
+
+    <div class="flex flex-col lg:grid lg:grid-cols-12 2xl:grid-cols-13 items-center justify-between w-full gap-6 2xl:gap-10 mt-8">
+      <div class="left-upcoming-jobs flex flex-col h-full items-start gap-5 w-full col-span-7 2xl:col-span-9">
+        <div class="header flex flex-row items-start justify-between gap-2 w-full">
+          <div class="left flex flex-col items-start">
+            <span class="text-2xl font-bold">Upcoming Jobs</span>
+            <span class="text-sm text-gray-500">Next few jobs scheduled to run.</span>
+          </div>
+
+          <app-button class="w-fit" size="sm" type="button" text="View All Jobs" hierarchy="primary" icon="leading" iconName="arrow-up-right"></app-button>
+        </div>
+
+
+        <app-carousel style="width: stretch;" [items]="allCrons" [speed]="0.4" #carousel></app-carousel>
+
+      </div>
+
+
+      <div class="right flex justify-end w-full col-span-5 2xl:col-span-4">
+        <div class="health-score-card rounded-lg border max-w-96 flex-1 w-full! border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
+
+          <div class="badge-warning flex items-center absolute top-4 right-4 gap-1 w-fit bg-orange-100 text-orange-700 font-bold rounded-2xl px-2.5 py-0.75">
+              <i class="ph-duotone ph-warning"></i>
+              <span class="text-sm">2 jobs need attention.</span>
+          </div>
+
+          <i [ngClass]="`ph-duotone ph-pulse text-4xl`"></i>
+
+          <div class="flex flex-col">
+            <span class="text-lg font-normal tracking-tight">Health Score</span>
+            <div class="score-group flex items-end">
+              <span class="text-6xl font-bold">96</span>
+              <div class="flex items-end text-border-card">
+                <span class="text-4xl font-light">/</span>
+                <span class="text-xl tracking-tight font-bold">100</span>
+              </div>
+            </div>
+
+            <div class="badge flex items-center gap-1 w-fit bg-green-100 text-green-700 font-bold rounded-2xl px-2.5 py-0.75">
+              <i class="ph-duotone ph-trend-up"></i>
+              <span class="text-sm">2%</span>
+            </div>
+
+          </div>
+
+          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/diagnosis.png`" alt="">
+        </div>
+      </div>
+
+    </div>
+
+
+
+  }
+</section>

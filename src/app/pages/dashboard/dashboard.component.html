@@ -32,7 +32,7 @@
   <div
     class="
       side-bar
-      fixed inset-y-0 left-0 z-40 w-64 bg-[#F8F9F2] p-5
+      fixed inset-y-0 left-0 z-40 w-64 bg-[#FEFEFC] p-5
       transform transition-transform duration-300
       -translate-x-full
       md:translate-x-0 md:static md:w-auto md:col-span-2 xl:col-span-2
@@ -52,23 +52,23 @@
       </div>
 
 
-      <div class="nav-items-group flex flex-col items-start mt-5 gap-12">
-        <div class="platform-group w-full flex flex-col gap-5">
+      <div class="nav-items-group flex flex-col w-full items-start mt-5 gap-12">
+        <div class="platform-group w-full flex flex-col gap-3">
           <span class="text-sm">Platform</span>
 
           <div class="nav-items flex flex-col items-start gap-2 w-full">
             @for (item of navItems; track $index) {
-              <div class="item w-full flex items-center gap-2">
-                <span [ngClass]="`ph ph-${item.icon}`"></span>
+              <div [routerLinkActiveOptions]="{ exact: item.exact ?? false }" [routerLink]="item.link" routerLinkActive="bg-brand-50 text-brand-700 font-semibold" class="item w-full flex items-center gap-2 px-2 py-1 cursor-pointer rounded-md">
+                <span routerLinkActive="ph-bold" [ngClass]="`ph ph-${item.icon}`"></span>
                 <span>{{item.label}}</span>
               </div>
             }
-
           </div>
+          
         </div>
 
 
-         <div class="extras-group w-full flex flex-col gap-5">
+         <div class="extras-group w-full flex flex-col gap-3">
           <span class="text-sm">Extras</span>
 
           <div class="nav-items flex flex-col items-start gap-2 w-full">
@@ -100,7 +100,7 @@
       } @else {
         <div class="flex flex-col items-start gap-5 w-full">
           <div class="flex items-center gap-2">
-            <div class="img-container flex md:hidden lg:flex w-12 h-12 overflow-hidden rounded-full">
+            <div class="img-container flex md:hidden lg:flex w-12 h-12 overflow-hidden rounded-lg">
               <img [src]="user.profileImage" class="object-cover" alt="User avatar">
             </div>
             <div class="flex flex-col items-start">
@@ -117,118 +117,8 @@
 
 
 
-  <div class="content-section flex-1 p-4 md:p-10 md:col-span-5 xl:col-span-8 2xl:col-span-8 flex flex-col gap-6 items-center bg-[#FEFEFC]">
-
-    <div class="header w-full flex flex-col items-start">
-      <span class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60">Here's what is happening with your cron jobs.</span>
-        <span class="font-semibold font-sans flex flex-wrap text-3xl md:text-5xl tracking-tight text-gradient-fade">{{ greeting }}, {{first_name}}</span>
-    </div>
-    
-    @if (isLoading) {
-      <!-- Skeleton state -->
-      <div class="w-full h-full animate-pulse">
-        <div class="mx-auto w-full">
-          <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
-          <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
-
-          <div class="h-40 w-full rounded-lg bg-gray-200 my-8"></div>
-
-          <div class="h-7 rounded-lg w-40 bg-gray-200 mb-3"></div>
-          <div class="h-4 rounded-lg w-64 bg-gray-200 mb-8"></div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="h-40 rounded-lg bg-gray-200"></div>
-            <div class="h-40 rounded-lg bg-gray-200"></div>
-            <div class="h-40 rounded-lg bg-gray-200"></div>
-            <div class="h-40 rounded-lg bg-gray-200"></div>
-            <div class="h-40 rounded-lg bg-gray-200"></div>
-            <div class="h-40 rounded-lg bg-gray-200"></div>
-          </div>
-        </div>
-      </div>
-    }
-    <!-- @else if (schedules.length === 0) {
-    <div class="content-for-empty-dashboard w-full flex-1 flex flex-col items-center justify-center fade-in">
-      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
-      <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No Schedules Available</span>
-      <span class="text-gray-600 text-sm lg:text-base xl:text-2xl opacity-60 font-regular tracking-tight">Your completed schedules will appear here when done!</span>
-       <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
-    </div>
-  } -->
-    @else {
-
-    <!-- Three stats cards at the top -->
-    <div class="stats-card-group flex flex-col md:flex-row flex-wrap items-center gap-8 w-full -mt-7 md:-mt-6">
-      @for (item of statCards; track $index) {
-        <div class="card-stat rounded-lg border max-w-88 flex-1 w-full! lg:min-w-64 border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
-  
-          <i [ngClass]="`ph-duotone ph-${item.icon} text-4xl`"></i>
-  
-          <div class="flex flex-col">
-            <span class="text-lg font-normal tracking-tight">{{item.label}}</span>
-            <span class="text-6xl font-bold">{{item.value}}</span>
-          </div>
-  
-          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/${item.img}.png`" alt="">
-        </div>
-      }
-    </div>
-
-    <!-- Upcoming jobs and health score check group -->
-
-    <div class="flex flex-col lg:grid lg:grid-cols-12 items-center justify-between w-full gap-6">
-      <div class="left-upcoming-jobs flex flex-col h-full items-start gap-5 w-full col-span-7">
-        <div class="header flex flex-row items-start justify-between gap-2 w-full">
-          <div class="left flex flex-col items-start">
-            <span class="text-2xl font-bold">Upcoming Jobs</span>
-            <span class="text-sm text-gray-500">Next few jobs scheduled to run.</span>
-          </div>
-
-          <app-button class="w-fit" size="sm" type="button" text="View All Jobs" hierarchy="primary" icon="leading" iconName="arrow-up-right"></app-button>
-        </div>
-
-
-        <app-carousel style="width: stretch;" [items]="cronJobs" [speed]="0.4" #carousel></app-carousel>
-
-      </div>
-
-
-      <div class="right flex justify-end w-full col-span-5">
-        <div class="health-score-card rounded-lg border max-w-96 flex-1 w-full! border-border-card bg-white shadow-card p-5 overflow-hidden relative flex flex-col items-start gap-4">
-
-          <div class="badge-warning flex items-center absolute top-4 right-4 gap-1 w-fit bg-orange-100 text-orange-700 font-bold rounded-2xl px-2.5 py-0.75">
-              <i class="ph-duotone ph-warning"></i>
-              <span class="text-sm">2 jobs need attention.</span>
-          </div>
-
-          <i [ngClass]="`ph-duotone ph-pulse text-4xl`"></i>
-  
-          <div class="flex flex-col">
-            <span class="text-lg font-normal tracking-tight">Health Score</span>
-            <div class="score-group flex items-end">
-              <span class="text-6xl font-bold">96</span>
-              <div class="flex items-end text-border-card">
-                <span class="text-4xl font-light">/</span>
-                <span class="text-xl tracking-tight font-bold">100</span>
-              </div>
-            </div>
-
-            <div class="badge flex items-center gap-1 w-fit bg-green-100 text-green-700 font-bold rounded-2xl px-2.5 py-0.75">
-              <i class="ph-duotone ph-trend-up"></i>
-              <span class="text-sm">2%</span>
-            </div>
-            
-          </div>
-  
-          <img class="absolute -bottom-19 -right-8 w-52 h-52" [src]="`/images/diagnosis.png`" alt="">
-        </div>
-      </div>
-
-    </div>
-
-
- 
-  }
+  <div class="content-section w-full flex-1 md:col-span-5 xl:col-span-8 2xl:col-span-9 max-h-screen bg-[#FEFEFC]">
+    <router-outlet></router-outlet>
   </div>
 
 

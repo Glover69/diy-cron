@@ -45,3 +45,85 @@ export type LoginResponse = {
   token: string;
   user: GoogleUser
 };
+
+// export interface CronJob {
+//   id: number;
+//   name: string;
+//   url: string;
+//   schedule: string;
+//   scheduleLabel: string;
+//   nextRun: string;
+//   status: 'active' | 'warning' | 'inactive';
+//   img: string;
+// }
+
+
+export type CronJob = {
+    cronId: string;
+    cronName: string;
+    description: string;
+    endpointUrl: string;
+    httpMethod: string;
+    scheduleType: string;
+    scheduleExpression: string;
+    scheduleLabel: string; // TBA
+    nextRunAt: string; 
+    isActive: boolean;
+    status: 'active' | 'warning' | 'inactive'; // TBA
+    createdAt?: string; 
+    updatedAt?: string; 
+    timeoutSeconds?: number;
+    headers?: {key: string; value: string}[];
+    payload?: string;
+    retryCount?: number;
+    retryStrategy?: string;
+    notifyOn?: string;
+    totalExecutions: number;
+    successRate: number;
+    avgResponseTimeMs: number;
+}
+
+
+export type CronCreateRequest = {
+    cronName: string;
+    description?: string;
+    endpointUrl: string;
+    httpMethod: string;
+    scheduleType: string;
+    scheduleExpression: string;
+    isActive: boolean;
+    timeoutSeconds?: number;
+    headers?: Record<string, string>;
+    payload?: string;
+    retryCount?: number;
+    retryStrategy?: string;
+    notifyOn?: string;
+}
+
+export type ToastProps = {
+  id: string | number;
+  title: string;
+  description: string;
+  button: {
+    label: string;
+    onClick: () => void;
+  };
+  position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'top-center' | 'bottom-center';
+}
+
+export type LogsResponse = {
+    name: string;
+    responseTime: string;
+    statusCode: number;
+}
+
+export type ExecutionLogs = {
+  logId: string;
+  cronId: string;
+  executedAt: string;
+  status: 'SUCCESS' | 'FAILURE' | 'PENDING';
+  httpStatusCode: number;
+  responseTimeMS: number;
+  responseBody: string;
+  errorMessage: string;
+}
