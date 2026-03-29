@@ -78,6 +78,9 @@ export type CronJob = {
     retryCount?: number;
     retryStrategy?: string;
     notifyOn?: string;
+    totalExecutions: number;
+    successRate: number;
+    avgResponseTimeMs: number;
 }
 
 
@@ -115,8 +118,10 @@ export type LogsResponse = {
 }
 
 export type ExecutionLogs = {
-  job: CronJob;
-  status: string;
+  logId: string;
+  cronId: string;
+  executedAt: string;
+  status: 'SUCCESS' | 'FAILURE' | 'PENDING';
   httpStatusCode: number;
   responseTimeMS: number;
   responseBody: string;

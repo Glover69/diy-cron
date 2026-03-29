@@ -28,8 +28,15 @@ export class CronService {
 
 
   // Get logs for a specific cron job
-  getLogsForACronJob(cronId: string): Observable<ExecutionLogs[]>{
-    return this.http.get<ExecutionLogs[]>(`${this.apiURL}/logs/single-cron/all?cronId=${cronId}`, { withCredentials: true })
+  getLogsForACronJob(cronId: string, page: number = 0, size: number = 10, status: string = '', timeframe: string = ''): Observable<{logs: ExecutionLogs[], currentPage: number, totalItems: number, totalPages: number}>{
+    let url = `${this.apiURL}/logs/single-cron/all?cronId=${cronId}&page=${page}&size=${size}`;
+    if (status && status !== 'ALL') {
+      url += `&status=${status}`;
+    }
+    if (timeframe && timeframe !== 'ALL') {
+      url += `&timeframe=${timeframe}`;
+    }
+    return this.http.get<{logs: ExecutionLogs[], currentPage: number, totalItems: number, totalPages: number}>(url, { withCredentials: true })
   }
 
 }

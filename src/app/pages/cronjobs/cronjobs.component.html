@@ -180,12 +180,12 @@
             </div>
 
             <!-- Runs -->
-            <div class="right flex flex-col items-start gap-1">
+            <!-- <div class="right flex flex-col items-start gap-1">
               <span class="font-console text-sm text-gray-400">Runs</span>
               <span class="font-console font-medium text-sm shrink-0"
               >{{currentSelectedJob.scheduleLabel}}</span
               >
-            </div>
+            </div> -->
 
             <!-- Created date -->
             <div class="right flex flex-col items-start gap-1">
@@ -283,17 +283,17 @@
                   <div class="body grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
                     <div class="item flex flex-col items-start gap-1">
                       <span class="text-sm text-gray-400">Success rate</span>
-                      <span class="text-4xl font-semibold">98.5%</span>
+                      <span class="text-4xl font-semibold">{{currentSelectedJob.successRate}}%</span>
                     </div>
 
                     <div class="item flex flex-col items-start gap-1">
                       <span class="text-sm text-gray-400">Total Executions</span>
-                      <span class="text-4xl font-semibold">{{currentSelectedLogs.length}}</span>
+                      <span class="text-4xl font-semibold">{{currentSelectedJob.totalExecutions}}</span>
                     </div>
 
                     <div class="item flex flex-col items-start gap-1">
                       <span class="text-sm text-gray-400">Avg. response time</span>
-                      <span class="text-4xl font-semibold">245ms</span>
+                      <span class="text-4xl font-semibold">{{currentSelectedJob.avgResponseTimeMs}}ms</span>
                     </div>
                   </div>
                 </div>
@@ -441,9 +441,111 @@
 
             <!-- Logs -->
             <app-tab label="Logs" icon="files">
-              <div
-                class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4"
-              ></div>
+              <div class="flex flex-col items-start gap-4 w-full px-4 md:px-8 py-4">
+                
+                <!-- Filters Header -->
+                <div class="flex items-center justify-between w-full pb-3 border-b border-gray-200">
+                  <span class="text-sm font-semibold text-gray-500">Execution History ({{ totalLogItems }})</span>
+                  
+                  <div class="flex items-center gap-2">
+                    <select 
+                      (change)="changeLogTimeframeFilter($event)" 
+                      [value]="logTimeframeFilter"
+                      class="text-xs border border-gray-300 rounded-md px-2 py-1 bg-white outline-none focus:border-gray-500 cursor-pointer">
+                      <option value="ALL">All Time</option>
+                      <option value="TODAY">Today</option>
+                      <option value="YESTERDAY">Since Yesterday</option>
+                      <option value="LAST_7_DAYS">Last 7 Days</option>
+                      <option value="LAST_30_DAYS">Last 30 Days</option>
+                    </select>
+
+                    <select 
+                      (change)="changeLogStatusFilter($event)" 
+                      [value]="logStatusFilter"
+                      class="text-xs border border-gray-300 rounded-md px-2 py-1 bg-white outline-none focus:border-gray-500 cursor-pointer">
+                      <option value="ALL">All Status</option>
+                      <option value="SUCCESS">Success</option>
+                      <option value="FAILURE">Failure</option>
+                    </select>
+                  </div>
+                </div>
+
+                @if (currentSelectedLogs.length === 0) {
+                  <div class="w-full flex flex-col items-center justify-center py-16 gap-3">
+                    <i class="ph-duotone ph-files text-5xl text-gray-300"></i>
+                    <span class="font-bold text-gray-600">No logs found</span>
+                    <span class="text-sm text-gray-400">
+                      {{ (logStatusFilter === 'ALL' && logTimeframeFilter === 'ALL') ? "This job hasn't been executed yet." : "No logs match the selected filters." }}
+                    </span>
+                  </div>
+                } @else {
+                  <div class="w-full flex flex-col gap-3">
+                    @for (log of currentSelectedLogs; track log.logId) {
+                      <div class="w-full flex flex-col p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-gray-300 transition-colors">
+                        
+                        <!-- Top Header -->
+                        <div class="flex items-center justify-between w-full mb-3">
+                          <div class="flex items-center gap-3">
+                            <span 
+                              class="text-xs font-bold px-2 py-0.5 rounded-md border"
+                              [class]="getStatusBadgeClass(log.status, log.httpStatusCode)">
+                              {{ log.httpStatusCode }}
+                            </span>
+                            <span class="text-sm font-semibold text-gray-700">{{ log.status }}</span>
+                          </div>
+                          <span class="text-xs text-gray-500">{{ log.executedAt | date: 'MMM d, y, h:mm:ss a' }}</span>
+                        </div>
+
+                        <!-- Mid Stats -->
+                        <div class="flex items-center gap-6 mb-3 text-sm">
+                          <div class="flex items-center gap-1.5 text-gray-500">
+                            <i class="ph ph-clock text-gray-400"></i>
+                            <span class="font-console">{{ log.responseTimeMS }}ms</span>
+                          </div>
+                        </div>
+
+                        <!-- Response Body Snippet -->
+                        @if (log.responseBody) {
+                          <div class="mt-2">
+                            <span class="text-xs font-semibold text-gray-500 mb-1 block">Response:</span>
+                            <pre class="w-full p-3 bg-gray-50 border border-gray-100 text-gray-700 rounded-md overflow-x-auto text-xs font-console max-h-32 overflow-y-auto">{{ log.responseBody }}</pre>
+                          </div>
+                        }
+
+                        @if (log.errorMessage) {
+                          <div class="mt-2">
+                            <span class="text-xs font-semibold text-red-500 mb-1 block">Error:</span>
+                            <pre class="w-full p-3 bg-red-50 border border-red-100 text-red-700 rounded-md overflow-x-auto text-xs font-console max-h-32 overflow-y-auto">{{ log.errorMessage }}</pre>
+                          </div>
+                        }
+
+                      </div>
+                    }
+
+                    <!-- Pagination Controls -->
+                    @if (totalLogPages > 1) {
+                      <div class="flex items-center justify-between w-full pt-4 mt-2 border-t border-gray-100">
+                        <span class="text-xs text-gray-500">Page {{ currentLogPage + 1 }} of {{ totalLogPages }}</span>
+                        <div class="flex items-center gap-2">
+                          <button 
+                            (click)="changeLogPage(currentLogPage - 1)" 
+                            [disabled]="currentLogPage === 0"
+                            class="px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            Previous
+                          </button>
+                          <button 
+                            (click)="changeLogPage(currentLogPage + 1)" 
+                            [disabled]="currentLogPage >= totalLogPages - 1"
+                            class="px-3 py-1.5 text-xs font-medium border border-gray-200 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            Next
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+              </div>
             </app-tab>
 
             <!-- Stats -->
