@@ -67,17 +67,18 @@ export type CronJob = {
     scheduleType: string;
     scheduleExpression: string;
     scheduleLabel: string; // TBA
-    nextRunAt: string; 
+    nextRunAt: string;
     isActive: boolean;
-    status: 'active' | 'warning' | 'inactive'; // TBA
-    createdAt?: string; 
-    updatedAt?: string; 
+    jobStatus: 'ACTIVE' | 'ISSUES' | 'PAUSED'; // TBA
+    createdAt?: string;
+    updatedAt?: string;
     timeoutSeconds?: number;
     headers?: {key: string; value: string}[];
     payload?: string;
     retryCount?: number;
     retryStrategy?: string;
     notifyOn?: string;
+    retryDelay?: number;
     totalExecutions: number;
     successRate: number;
     avgResponseTimeMs: number;
@@ -96,6 +97,7 @@ export type CronCreateRequest = {
     headers?: Record<string, string>;
     payload?: string;
     retryCount?: number;
+    retryDelay?: number;
     retryStrategy?: string;
     notifyOn?: string;
 }

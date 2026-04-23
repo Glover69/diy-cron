@@ -10,10 +10,11 @@ import {TimeUntilPipe} from '../../../utils/time-utils.pipe';
 import gsap from 'gsap';
 import { CronService } from '../../../services/cron.service';
 import { Router, RouterLink } from '@angular/router';
+import { DialogComponent } from '../../components/new/dialog/dialog.component';
 
 @Component({
   selector: 'app-cronjobs',
-  imports: [ButtonComponent, TabGroupComponent, TabComponent, NgTemplateOutlet, SheetComponent, TimeUntilPipe, DatePipe, RouterLink],
+  imports: [ButtonComponent, TabGroupComponent, TabComponent, NgTemplateOutlet, SheetComponent, TimeUntilPipe, DatePipe, RouterLink, DialogComponent],
   templateUrl: './cronjobs.component.html',
   styleUrl: './cronjobs.component.css'
 })
@@ -21,6 +22,7 @@ export class CronjobsComponent implements OnInit{
   isLoading = false;
   sheetOpen: boolean = false;
   currentSelectedJob!: CronJob;
+  isDeleteDialogOpen: boolean = false;
   cronState = inject(CronStateService)
   cronService = inject(CronService)
   private ngZone = inject(NgZone)
@@ -38,15 +40,25 @@ export class CronjobsComponent implements OnInit{
   }
 
   deleteCron(cronId: string){
-    this.cronService.deleteCronJob(cronId).subscribe({
+    this.isDeleteDialogOpen = true;
+  }
+
+  confirmDelete(){
+    this.cronService.deleteCronJob(this.currentSelectedJob.cronId).subscribe({
       next: (res: any) => {
         console.log(res)
+        this.isDeleteDialogOpen = false;
         this.cronState.refresh();
         this.router.navigate(['/cronjobs'])
       }, error: (err: any) => {
         console.error(err);
+        this.isDeleteDialogOpen = false;
       }
     })
+  }
+
+  cancelDelete(){
+    this.isDeleteDialogOpen = false;
   }
 
   animateDashboardCards(){

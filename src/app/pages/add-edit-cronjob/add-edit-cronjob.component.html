@@ -5,26 +5,26 @@
     <div class="left flex flex-col items-start">
       <span
         class="font-bold flex flex-wrap text-3xl tracking-tight"
-        >Create Cron Job</span
+        >{{ isEditMode ? 'Edit Cron Job' : 'Create Cron Job' }}</span
       >
       <span
         class="font-medium md:text-lg tracking-tight text-gray-600 opacity-60"
-        >Set up a new automated task by configuring its endpoint and schedule.</span
+        >{{ isEditMode ? 'Update the configuration for this cron job.' : 'Set up a new automated task by configuring its endpoint and schedule.' }}</span
       >
     </div>
   </div>
 
     <form [formGroup]="cronForm" (ngSubmit)="onSubmit()" class="space-y-10 mt-12">
-      
+
       <!-- Basic Details Section -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div class="md:col-span-1 flex flex-col items-start">
           <span class="text-lg font-semibold tracking-tight text-gray-900 ">Basic Details</span>
           <span class="mt-2 text-sm text-gray-500 ">Provide a recognizable name and an optional description to easily identify this job later.</span>
         </div>
-        
+
         <div class="md:col-span-2 bg-white rounded-xl border border-gray-200 p-6 flex flex-col items-start w-full gap-6">
-          <app-input-field-base 
+          <app-input-field-base
           class="w-full"
             formControlName="cronName"
             label="Job Name"
@@ -33,7 +33,7 @@
             [hintText]="f['cronName'].invalid && f['cronName'].touched ? 'Name is required' : ''">
           </app-input-field-base>
 
-          <app-input-field-base 
+          <app-input-field-base
           class="w-full"
             formControlName="description"
             inputType="textarea"
@@ -51,19 +51,19 @@
           <span class="text-lg font-semibold tracking-tight text-gray-900 ">Endpoint Configuration</span>
           <span class="mt-2 text-sm text-gray-500 ">Define the URL and HTTP method that will be executed when the cron job runs.</span>
         </div>
-        
+
         <div class="md:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
           <div class="flex flex-col sm:flex-row gap-6">
             <div class="w-full sm:w-1/3">
-              <app-select 
+              <app-select
                 formControlName="httpMethod"
                 label="Method"
                 [options]="httpMethodOptions">
               </app-select>
             </div>
-            
+
             <div class="w-full sm:w-2/3">
-              <app-input-field-base 
+              <app-input-field-base
                 formControlName="endpointUrl"
                 label="Endpoint URL"
                 placeholder="https://api.example.com/webhook"
@@ -74,7 +74,7 @@
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
-            <app-input-field-base 
+            <app-input-field-base
                 formControlName="timeoutSeconds"
                 label="Timeout (seconds)"
                 placeholder="30">
@@ -98,14 +98,14 @@
                 <div [formGroupName]="$index" class="flex gap-3 items-start">
                   <div class="flex-1">
                     <!-- Alternatively could use an autocomplete input here -->
-                    <app-select 
+                    <app-select
                       formControlName="key"
                       label=""
                       [options]="headerKeyOptions">
                     </app-select>
                   </div>
                   <div class="flex-1">
-                    <app-input-field-base 
+                    <app-input-field-base
                       formControlName="value"
                       placeholder="Value"
                       [isDestructive]="(header.get('value')?.invalid ?? false) && (header.get('value')?.touched ?? false)"
@@ -119,7 +119,7 @@
                   </button>
                 </div>
               }
-              
+
               @if (headersArray.length === 0) {
                 <div class="text-sm text-gray-500 text-center py-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
                   No headers added yet.
@@ -133,9 +133,9 @@
             <div class="mt-6 pt-6 border-t border-gray-100 flex flex-col items-start gap-2">
               <span class="text-sm font-medium text-gray-700">Request Body (JSON)</span>
               <div class="h-64 border border-gray-300 rounded-md overflow-hidden w-full m-0 p-0 relative">
-                <ngx-monaco-editor 
+                <ngx-monaco-editor
                   class="my-code-editor h-64! w-full absolute inset-0 p-0!"
-                  [options]="editorOptions" 
+                  [options]="editorOptions"
                   formControlName="payload">
                 </ngx-monaco-editor>
               </div>
@@ -152,10 +152,10 @@
           <span class="text-lg font-semibold tracking-tight text-gray-900">Schedule</span>
           <span class="mt-2 text-sm text-gray-500 ">Choose when and how often this job should execute using standard cron expression syntax.</span>
         </div>
-        
+
         <div class="md:col-span-2 bg-white rounded-xl border border-gray-200 p-6 space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <app-select 
+            <app-select
               formControlName="scheduleType"
               label="Schedule Type"
               [isSimpleData]="false"
@@ -163,7 +163,7 @@
             </app-select>
 
             @if (f['scheduleType'].value === 'cron') {
-              <app-input-field-base 
+              <app-input-field-base
                 formControlName="scheduleExpression"
                 label="Cron Expression"
                 placeholder="* * * * * *"
@@ -175,7 +175,7 @@
             @if (f['scheduleType'].value === 'interval') {
               <div class="flex gap-2 items-end">
                 <div class="flex-1">
-                  <app-input-field-base 
+                  <app-input-field-base
                     formControlName="intervalValue"
                     label="Run Every"
                     type="number"
@@ -183,7 +183,7 @@
                   </app-input-field-base>
                 </div>
                 <div class="flex-1">
-                  <app-select 
+                   <app-select
                     formControlName="intervalUnit"
                     label=""
                     [options]="intervalUnitOptions"
@@ -194,14 +194,14 @@
             }
 
             @if (f['scheduleType'].value === 'one-time') {
-              <app-input-field-base 
+              <app-input-field-base
                 formControlName="oneTimeDate"
                 label="Select Date & Time"
                 type="datetime-local">
               </app-input-field-base>
             }
           </div>
-          
+
           <!-- Optional: Helper text -->
           @if (f['scheduleType'].value === 'cron') {
             <div class="bg-gray-50 border border-gray-100 p-4 rounded-lg text-sm text-gray-700 flex items-start gap-3">
@@ -209,7 +209,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
               </svg>
               <div>
-                <span class="font-medium text-gray-900">Example expression:</span> 
+                <span class="font-medium text-gray-900">Example expression:</span>
                 <code class="bg-white px-1.5 py-0.5 rounded border border-gray-200 mx-1">0 0 2 * * *</code>
                 Runs every day at 2:00 AM
               </div>
@@ -226,29 +226,39 @@
           <span class="text-lg font-semibold tracking-tight text-gray-900">Advanced Settings</span>
           <span class="mt-2 text-sm text-gray-500 ">Configure retry logic and notification preferences for when executions fail.</span>
         </div>
-        
+
         <div class="md:col-span-2 bg-white rounded-xl border border-gray-200 p-6 space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <app-input-field-base 
+            <app-input-field-base
               formControlName="retryCount"
               label="Retry Count"
               placeholder="3">
             </app-input-field-base>
 
-            <app-select 
+            <app-input-field-base
+              formControlName="retryDelay"
+              label="Retry Delay (seconds)"
+              placeholder="5">
+            </app-input-field-base>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <app-select
               formControlName="retryStrategy"
               label="Retry Strategy"
               [options]="retryStrategies">
             </app-select>
-          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <app-select 
+            <app-select
               formControlName="notifyOn"
               label="Notifications"
               [options]="notificationOptions">
             </app-select>
           </div>
+
+<!--          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">-->
+
+<!--          </div>-->
         </div>
       </div>
 
@@ -260,17 +270,18 @@
         </div>
 
         <div class="flex w-full sm:w-auto justify-end gap-3">
-          <app-button 
-            type="button" 
-            hierarchy="secondary" 
+          <app-button
+            [routerLink]="'/home/cronjobs'"
+            type="button"
+            hierarchy="secondary"
             [icon]="'false'"
             text="Cancel">
           </app-button>
-          
-          <app-button 
-            type="submit" 
-            hierarchy="primary" 
-            text="Create Cron Job"
+
+          <app-button
+            type="submit"
+            hierarchy="primary"
+            [text]="isEditMode ? 'Update Cron Job' : 'Create Cron Job'"
             [icon]="'false'"
             [loading]="isSubmitting"
             [disabled]="isSubmitting">

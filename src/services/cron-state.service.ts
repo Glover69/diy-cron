@@ -5,7 +5,7 @@ import { CronService } from './cron.service';
 
 @Injectable({ providedIn: 'root' })
 export class CronStateService {
-  private cronService = inject(CronService);
+  private cronService= inject(CronService);
 
   private _cronJobs = signal<CronJob[]>([]);
   private _isLoading = signal(false);
@@ -14,9 +14,9 @@ export class CronStateService {
   readonly cronJobs = this._cronJobs.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
 
-  readonly activeJobs = computed(() => this._cronJobs().filter(j => j.isActive));
-  readonly warningJobs = computed(() => this._cronJobs().filter(j => !j.isActive));
-  readonly inactiveJobs = computed(() => this._cronJobs().filter(j => !j.isActive));
+  readonly activeJobs = computed(() => this._cronJobs().filter(j => j.jobStatus === 'ACTIVE'));
+  readonly warningJobs = computed(() => this._cronJobs().filter(j => j.jobStatus === 'ISSUES'));
+  readonly inactiveJobs = computed(() => this._cronJobs().filter(j => j.jobStatus === 'PAUSED'));
 
   load() {
     if (this._cronJobs().length > 0) return; // already loaded, skip

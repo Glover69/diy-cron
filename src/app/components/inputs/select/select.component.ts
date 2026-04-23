@@ -1,10 +1,11 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, forwardRef, Input, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-select',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   standalone: true,
   templateUrl: './select.component.html',
   styleUrl: './select.component.css',
@@ -25,6 +26,7 @@ export class SelectComponent {
   // Internal state
   value: string | null = null;
   disabled = false;
+  private cdr = inject(ChangeDetectorRef);
 
   // Placeholder functions for Angular callbacks
   private propagateChange = (_: any) => {};
@@ -36,8 +38,20 @@ export class SelectComponent {
 
   // Called by Angular to write a value into the component
   writeValue(value: any): void {
-    this.value = value ?? null;
+    if (value !== this.value) {
+      this.value = value ?? null;
+      this.cdr.markForCheck();
+    }
   }
+
+  // --- ControlValueAccessor implementation ---
+
+  // Called by Angular to write a value into the component
+  // writeValue(value: any): void {
+  //   if (value !== this.value) {
+  //     this.value = value ?? null;
+  //   }
+  // }
 
   // Registers a callback function that should be called when the control's value changes in the UI.
   registerOnChange(fn: any): void {
