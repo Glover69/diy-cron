@@ -24,6 +24,7 @@ export const routes: Routes = [
       { path: 'cronjobs', component: CronjobsComponent },
       { path: 'execution-logs', component: ExecutionLogsComponent },
       { path: 'cronjobs/create', component: AddEditCronjobComponent },
+      { path: 'cronjobs/edit/:cronId', component: AddEditCronjobComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full'}
     ]
   },

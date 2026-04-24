@@ -4,9 +4,9 @@
   }
   
   <div class="relative w-full">
-    <select [value]="value" (change)="onChange($event)" (blur)="onTouched()" [disabled]="disabled" class="appearance-none w-full shadow-xs rounded-lg text-sm G-Light px-3.5 py-2.5 pr-10 border border-gray-300 bg-white" name="" id="">
+    <select [(ngModel)]="value" (change)="onChange($event)" (blur)="onTouched()" [disabled]="disabled" class="appearance-none w-full shadow-xs rounded-lg text-sm G-Light px-3.5 py-2.5 pr-10 border border-gray-300 bg-white" name="" id="">
       @if (placeholder) {
-        <option class="text-regular-txt" [value]="null" disabled selected>{{ placeholder }}</option>
+        <option class="text-regular-txt" [value]="null" disabled>{{ placeholder }}</option>
       }
 
       @if (isSimpleData) {
@@ -18,7 +18,7 @@
         <option [value]="option.value">{{option.label}}</option>
         }
       }
-     
+
     </select>
     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
       <i class="ph ph-caret-down"></i>
