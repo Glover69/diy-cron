@@ -21,7 +21,7 @@ export class AuthComponent {
   loginWithGoogle(): void {
   const params = new URLSearchParams({
     client_id: environment.googleClientId,
-    redirect_uri: 'http://localhost:4200/auth-callback',
+    redirect_uri: environment.redirectUri,
     response_type: 'code',
     scope: 'openid email profile',
     access_type: 'offline',
