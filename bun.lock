@@ -17,7 +17,7 @@
         "@tailwindcss/postcss": "^4.1.11",
         "google-auth-library": "^10.2.1",
         "gsap": "^3.13.0",
-        "ngx-monaco-editor-v2": "^21.1.4",
+        "ngx-monaco-editor-v2": "^19.0.0",
         "postcss": "^8.5.6",
         "rxjs": "~7.8.0",
         "tailwindcss": "^4.1.11",
@@ -1370,7 +1370,7 @@
 
     "neo-async": ["neo-async@2.6.2", "", {}, "sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw=="],
 
-    "ngx-monaco-editor-v2": ["ngx-monaco-editor-v2@21.1.4", "", { "dependencies": { "tslib": "^2.8.1" }, "peerDependencies": { "@angular/common": "^21.1.4", "@angular/core": "^21.1.4", "monaco-editor": "^0.55.1" } }, "sha512-dZu3dY3D1YXPTIDRn9zOERdtDtGy1SOztpWG6gJlaj6NMSV59kNR/hfzaP+L3BukP6Ve07f3bIyvsx6Pz7uOaA=="],
+    "ngx-monaco-editor-v2": ["ngx-monaco-editor-v2@19.0.2", "", { "dependencies": { "tslib": "^2.1.0" }, "peerDependencies": { "@angular/common": "^19.0.4", "@angular/core": "^19.0.4", "monaco-editor": "^0.52.2" } }, "sha512-hkPiCnLU0vdIF2DW7Ko/EHoGCtLxuN85eygKuk3fXL2GRbEIl5VcbUXmRX9ItfLOI1F5QcH80HhavY5r0gNfEw=="],
 
     "node-addon-api": ["node-addon-api@6.1.0", "", {}, "sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA=="],
 
