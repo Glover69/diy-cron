@@ -83,6 +83,7 @@ export class AddEditCronjobComponent implements OnInit {
       retryDelay: [5, [Validators.min(1)]],
       retryStrategy: ['Fixed'],
       notifyOn: ['Never'],
+      webhookURL: [''],
       isActive: [true]
     });
   }
@@ -167,6 +168,7 @@ export class AddEditCronjobComponent implements OnInit {
       retryDelay: job.retryDelay || 5,
       retryStrategy: job.retryStrategy || 'Fixed',
       notifyOn: job.notifyOn || 'Never',
+      webhookURL: job.webhookURL || '',
       isActive: job.isActive
     });
 
@@ -238,13 +240,15 @@ export class AddEditCronjobComponent implements OnInit {
       scheduleType: rawValue.scheduleType,
       scheduleExpression: finalScheduleExpression,
       isActive: rawValue.isActive,
+      jobStatus: rawValue.isActive ? 'ACTIVE' : 'PAUSED',
       timeoutSeconds: rawValue.timeoutSeconds,
       headers: formattedHeaders,
       payload: rawValue.payload,
       retryCount: rawValue.retryCount,
       retryDelay: rawValue.retryDelay,
       retryStrategy: rawValue.retryStrategy,
-      notifyOn: rawValue.notifyOn
+      notifyOn: rawValue.notifyOn,
+      webhookURL: rawValue.webhookURL || undefined
     };
 
     // Call create or update based on mode

@@ -256,6 +256,20 @@
             </app-select>
           </div>
 
+          <!-- Webhooks Section (shown when notifications are enabled) -->
+          @if (f['notifyOn'].value !== 'Never') {
+            <div class="border-t border-gray-100 pt-6">
+              <app-input-field-base
+              class="w-full"
+                formControlName="webhookURL"
+                label="Webhook URL (Optional)"
+                placeholder="https://api.example.com/webhooks/cron-notifications"
+                [isDestructive]="f['webhookURL'].invalid && f['webhookURL'].touched"
+                [hintText]="f['webhookURL'].invalid && f['webhookURL'].touched ? 'Valid URL is required' : 'Receives execution status updates via POST'">
+              </app-input-field-base>
+            </div>
+          }
+
 <!--          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">-->
 
 <!--          </div>-->

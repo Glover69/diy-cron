@@ -79,6 +79,7 @@ export type CronJob = {
     retryStrategy?: string;
     notifyOn?: string;
     retryDelay?: number;
+    webhookURL?: string;
     totalExecutions: number;
     successRate: number;
     avgResponseTimeMs: number;
@@ -93,6 +94,7 @@ export type CronCreateRequest = {
     scheduleType: string;
     scheduleExpression: string;
     isActive: boolean;
+    jobStatus: 'ACTIVE' | 'ISSUES' | 'PAUSED';
     timeoutSeconds?: number;
     headers?: Record<string, string>;
     payload?: string;
@@ -100,6 +102,7 @@ export type CronCreateRequest = {
     retryDelay?: number;
     retryStrategy?: string;
     notifyOn?: string;
+    webhookURL?: string;
 }
 
 export type ToastProps = {

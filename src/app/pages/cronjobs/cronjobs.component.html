@@ -47,15 +47,16 @@
     </div>
   }
   @else if (cronState.cronJobs().length === 0) {
-    <div class="content-for-empty-dashboard w-full flex-1 flex flex-col items-center justify-center fade-in">
-      <img src="/images/empty-dashboard.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">
-      <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No jobs Available</span>
-      <span class="text-gray-600 text-sm lg:text-base xl:text-2xl opacity-60 font-regular tracking-tight">Your created cronjobs will appear here when done!</span>
-       <app-button [routerLink]="'/add-schedule'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create a class schedule" class="mt-4"></app-button>
+    <div class="content-for-empty-dashboard w-full h-[60vh] flex-1 flex flex-col items-center justify-center fade-in">
+<!--      <img src="/images/box.png" alt="Empty Dashboard" class="w-3/4 md:w-2/4 xl:w-2/5 2xl:w-2/7">-->
+      <i class="ph-duotone ph-package text-9xl text-gray-300"></i>
+      <span class="text-gray-800 text-xl lg:text-2xl xl:text-3xl font-bold tracking-tight mt-4">No jobs available.</span>
+      <span class="text-gray-600 text-sm lg:text-base xl:text-2xl text-center opacity-60 font-regular tracking-tight">Your created cronjobs will appear here when done!</span>
+       <app-button [routerLink]="'create'" [size]="'sm'" [hierarchy]="'primary'" [type]="'button'" [icon]="'leading'" [iconName]="'plus'" text="Create new Job" class="mt-4"></app-button>
     </div>
   }
   @else {
-    <app-tab-group class="mt-12">
+    <app-tab-group class="mt-12 h-full">
       <!-- All Jobs -->
       <app-tab label="Overview" icon="squares-four">
         <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -74,6 +75,16 @@
             <ng-container
               *ngTemplateOutlet="jobCard; context: { $implicit: job }"
             ></ng-container>
+          } @empty {
+            <div
+              class="col-span-3 flex h-[60vh] flex-col items-center justify-center py-16 gap-2 text-center"
+            >
+              <i class="ph-duotone ph-check-circle text-9xl text-green-400"></i>
+              <span class="font-bold text-3xl tracking-tight text-gray-600">No active jobs</span>
+              <span class="text-base text-gray-400"
+              >You have no cron jobs running at the moment.</span
+              >
+            </div>
           }
         </div>
       </app-tab>
@@ -87,11 +98,11 @@
             ></ng-container>
           } @empty {
             <div
-              class="col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center"
+              class="col-span-3 flex h-[60vh] flex-col items-center justify-center py-16 gap-2 text-center"
             >
-              <i class="ph-duotone ph-check-circle text-5xl text-green-400"></i>
-              <span class="font-bold text-gray-600">No issues</span>
-              <span class="text-sm text-gray-400"
+              <i class="ph-duotone ph-check-circle text-9xl text-green-400"></i>
+              <span class="font-bold text-3xl tracking-tight text-gray-600">No issues</span>
+              <span class="text-base text-gray-400"
                 >All your jobs are running fine</span
               >
             </div>
@@ -112,11 +123,11 @@
             ></ng-container>
           } @empty {
             <div
-              class="md:col-span-1 lg:col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center"
+              class="md:col-span-1 h-[60vh] lg:col-span-3 flex flex-col items-center justify-center py-16 gap-2 text-center"
             >
-              <i class="ph-duotone ph-play-circle text-5xl text-gray-300"></i>
-              <span class="font-bold text-gray-600">No inactive jobs</span>
-              <span class="text-sm text-gray-400"
+              <i class="ph-duotone ph-play-circle text-9xl text-gray-300"></i>
+              <span class="font-bold text-3xl tracking-tight text-gray-600">No inactive jobs</span>
+              <span class="text-lg text-gray-400"
                 >All your jobs are currently enabled</span
               >
             </div>
@@ -153,26 +164,26 @@
               <span
                 class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
                 [class]="
-                currentSelectedJob.isActive
+                currentSelectedJob.jobStatus === 'ACTIVE'
                   ? 'bg-green-100 text-green-700'
-                  : currentSelectedJob.isActive
+                  : currentSelectedJob.jobStatus === 'ISSUES'
                     ? 'bg-orange-100 text-orange-700'
                     : 'bg-gray-100 text-gray-500'
               "
               >
               <i
                 [class]="
-                  currentSelectedJob.isActive
+                  currentSelectedJob.jobStatus === 'ACTIVE'
                     ? 'ph ph-activity'
-                    : currentSelectedJob.isActive
+                    : currentSelectedJob.jobStatus === 'ISSUES'
                       ? 'ph ph-warning'
                       : 'ph ph-pause'
                 "
               ></i>
                 {{
-                  currentSelectedJob.isActive
+                  currentSelectedJob.jobStatus === 'ACTIVE'
                     ? "Active"
-                    : currentSelectedJob.isActive == false
+                    : currentSelectedJob.jobStatus === 'ISSUES'
                       ? "Warning"
                       : "Inactive"
                 }}
